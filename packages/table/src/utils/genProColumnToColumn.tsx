@@ -1,18 +1,28 @@
 ﻿import type { ProFieldEmptyText } from '@ant-design/pro-field';
 import { proFieldParsingValueEnumToArray } from '@ant-design/pro-field';
-import type { ProSchemaComponentTypes, UseEditableUtilType } from '@ant-design/pro-utils';
-import { omitBoolean, omitUndefinedAndEmptyArr, runFunction } from '@ant-design/pro-utils';
+import type {
+  ProSchemaComponentTypes,
+  UseEditableUtilType,
+} from '@ant-design/pro-utils';
+import {
+  omitBoolean,
+  omitUndefinedAndEmptyArr,
+  runFunction,
+} from '@ant-design/pro-utils';
 import type { TableColumnType, TableProps } from 'antd';
 import { Table } from 'antd';
+import { AnyObject } from 'antd/es/_util/type';
 import type { ContainerType } from '../Store/Provide';
-import type { ProColumnGroupType, ProColumns } from '../typing';
-import { columnRender, defaultOnFilter, renderColumnsTitle } from './columnRender';
+import type { ProColumns } from '../typing';
+import {
+  columnRender,
+  defaultOnFilter,
+  renderColumnsTitle,
+} from './columnRender';
 import { genColumnKey } from './index';
 
 type ColumnToColumnReturnType<T> = (TableColumnType<T> & {
   index?: number;
-  isExtraColumns?: boolean;
-  extraColumn?: typeof Table.EXPAND_COLUMN | typeof Table.SELECTION_COLUMN;
 })[];
 
 type ColumnToColumnParams<T> = {
@@ -30,9 +40,9 @@ type ColumnToColumnParams<T> = {
  * @param map
  * @param columnEmptyText
  */
-export function genProColumnToColumn<T>(
-  params: ColumnToColumnParams<T>,
-  parents?: ProColumnGroupType<T, any>,
+export function genProColumnToColumn<T extends AnyObject>(
+  params: ColumnToColumnParams<T> & { marginSM: number },
+  parents?: ProColumns<T, any>,
 ): ColumnToColumnReturnType<T> {
   const {
     columns,
@@ -40,6 +50,7 @@ export function genProColumnToColumn<T>(
     columnEmptyText,
     type,
     editableUtils,
+    marginSM,
     rowKey = 'id',
     childrenColumnName = 'children',
   } = params;
@@ -48,6 +59,8 @@ export function genProColumnToColumn<T>(
 
   return columns
     ?.map((columnProps, columnsIndex) => {
+      if (columnProps === Table.EXPAND_COLUMN) return columnProps;
+      if (columnProps === Table.SELECTION_COLUMN) return columnProps;
       const {
         key,
         dataIndex,
@@ -56,7 +69,7 @@ export function genProColumnToColumn<T>(
         children,
         onFilter,
         filters = [],
-      } = columnProps as ProColumnGroupType<T, any>;
+      } = columnProps as ProColumns<T, any>;
       const columnKey = genColumnKey(
         key || dataIndex?.toString(),
         [parents?.key, columnsIndex].filter(Boolean).join('-'),
@@ -69,34 +82,19 @@ export function genProColumnToColumn<T>(
           ...columnProps,
         };
       }
-
-      /**
-       * 是不是展开行和多选按钮
-       */
-      const isExtraColumns =
-        columnProps === Table.EXPAND_COLUMN || columnProps === Table.SELECTION_COLUMN;
-
-      if (isExtraColumns) {
-        return {
-          index: columnsIndex,
-          isExtraColumns: true,
-          hideInSearch: true,
-          hideInTable: false,
-          hideInForm: true,
-          hideInSetting: true,
-          extraColumn: columnProps,
-        };
-      }
-      const config = counter.columnsMap[columnKey] || { fixed: columnProps.fixed };
+      const config = counter.columnsMap[columnKey] || {
+        fixed: columnProps.fixed,
+      };
 
       const genOnFilter = () => {
         if (onFilter === true) {
-          return (value: string, row: T) => defaultOnFilter(value, row, dataIndex as string[]);
+          return (value: string, row: T) =>
+            defaultOnFilter(value, row, dataIndex as string[]);
         }
         return omitBoolean(onFilter);
       };
 
-      let keyName: React.Key = rowKey as string;
+      let keyName: string | number | symbol = rowKey as string;
 
       const tempColumns = {
         index: columnsIndex,
@@ -113,30 +111,39 @@ export function genProColumnToColumn<T>(
         onFilter: genOnFilter(),
         fixed: config.fixed,
         width: columnProps.width || (columnProps.fixed ? 200 : undefined),
-        children: (columnProps as ProColumnGroupType<T, any>).children
+        children: (columnProps as ProColumns<T, any>).children
           ? genProColumnToColumn(
               {
                 ...params,
-                columns: (columnProps as ProColumnGroupType<T, any>)?.children,
+                columns: (columnProps as ProColumns<T, any>)?.children || [],
               },
-              { ...columnProps, key: columnKey } as ProColumnGroupType<T, any>,
+              { ...columnProps, key: columnKey } as ProColumns<T, any>,
             )
           : undefined,
         render: (text: any, rowData: T, index: number) => {
           if (typeof rowKey === 'function') {
-            keyName = rowKey(rowData, index);
+            keyName = rowKey(rowData, index) as string;
           }
 
           let uniqueKey: any;
-          if (Reflect.has(rowData as any, keyName)) {
-            uniqueKey = rowData[keyName];
+          if (
+            typeof rowData === 'object' &&
+            rowData !== null &&
+            Reflect.has(rowData as any, keyName)
+          ) {
+            uniqueKey = (rowData as Record<string, any>)[keyName as string];
             const parentInfo = subNameRecord.get(uniqueKey) || [];
-            rowData[childrenColumnName]?.forEach((item: any) => {
-              const itemUniqueKey = item[keyName];
-              if (!subNameRecord.has(itemUniqueKey)) {
-                subNameRecord.set(itemUniqueKey, parentInfo.concat([index, childrenColumnName]));
-              }
-            });
+            (rowData as Record<string, any>)[childrenColumnName]?.forEach(
+              (item: any) => {
+                const itemUniqueKey = item[keyName];
+                if (!subNameRecord.has(itemUniqueKey)) {
+                  subNameRecord.set(
+                    itemUniqueKey,
+                    parentInfo.concat([index, childrenColumnName]),
+                  );
+                }
+              },
+            );
           }
 
           const renderProps = {
@@ -147,18 +154,16 @@ export function genProColumnToColumn<T>(
             columnEmptyText,
             counter,
             type,
+            marginSM,
             subName: subNameRecord.get(uniqueKey),
             editableUtils,
           };
-
           return columnRender<T>(renderProps);
         },
       };
       return omitUndefinedAndEmptyArr(tempColumns);
     })
-    ?.filter((item) => !item.hideInTable) as unknown as (TableColumnType<T> & {
-    index?: number;
-    isExtraColumns?: boolean;
-    extraColumn?: typeof Table.EXPAND_COLUMN | typeof Table.SELECTION_COLUMN;
-  })[];
+    ?.filter(
+      (item) => !item.hideInTable,
+    ) as unknown as ColumnToColumnReturnType<T>;
 }

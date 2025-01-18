@@ -1,11 +1,16 @@
 import ProDescriptions from '@ant-design/pro-descriptions';
 import type { ProCoreActionType } from '@ant-design/pro-utils';
-import { act, render, waitFor } from '@testing-library/react';
-import { Button } from 'antd';
-import { useRef } from 'react';
-import { waitForComponentToPaint, waitTime } from '../util';
+import { cleanup, render, waitFor } from '@testing-library/react';
+import { Button, Input } from 'antd';
+import React, { act } from 'react';
+afterEach(() => {
+  cleanup();
+});
 
 describe('descriptions', () => {
+  afterEach(() => {
+    cleanup();
+  });
   it('🥩 descriptions render valueEnum when data = 0', async () => {
     const { container } = render(
       <ProDescriptions
@@ -30,13 +35,15 @@ describe('descriptions', () => {
     );
 
     await waitFor(() =>
-      expect(container.querySelector('span.ant-badge-status-text')?.innerHTML).toBe('关闭'),
+      expect(
+        container.querySelector('span.ant-badge-status-text')?.innerHTML,
+      ).toBe('关闭'),
     );
   });
 
   it('🎏 onLoadingChange test', async () => {
-    const fn = jest.fn();
-    const html = render(
+    const fn = vi.fn();
+    render(
       <ProDescriptions
         size="small"
         onLoadingChange={fn}
@@ -53,11 +60,14 @@ describe('descriptions', () => {
         }}
       />,
     );
-    await waitForComponentToPaint(html, 1200);
-    expect(fn).toBeCalled();
+
+    await waitFor(() => {
+      expect(fn).toBeCalled();
+    });
   });
 
   it('🎏 loading test', async () => {
+    vi.useFakeTimers();
     const html = render(
       <ProDescriptions
         columns={[
@@ -76,8 +86,14 @@ describe('descriptions', () => {
         }}
       />,
     );
-    await waitForComponentToPaint(html, 1200);
-    expect(!!html.baseElement.querySelector('.ant-skeleton')).toBeTruthy();
+
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
+
+    await waitFor(() => {
+      expect(!!html.baseElement.querySelector('.ant-skeleton')).toBeTruthy();
+    });
 
     act(() => {
       html.rerender(
@@ -100,25 +116,41 @@ describe('descriptions', () => {
         />,
       );
     });
-    await waitForComponentToPaint(html, 1200);
-    // props 指定为 false 后，无论 request 完成与否都不会出现 spin
-    expect(!!html.baseElement.querySelector('.ant-skeleton')).toBeFalsy();
+
+    act(() => {
+      vi.advanceTimersByTime(2000);
+    });
+
+    await waitFor(() => {
+      // props 指定为 false 后，无论 request 完成与否都不会出现 spin
+      expect(!!html.baseElement.querySelector('.ant-skeleton')).toBeFalsy();
+    });
+
+    vi.useRealTimers();
   });
 
   it('🥩 test reload', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
+    vi.useFakeTimers();
+    const actionRef = React.createRef<ProCoreActionType>();
     const Reload = () => {
-      const actionRef = useRef<ProCoreActionType>();
       return (
         <ProDescriptions
           actionRef={actionRef}
           title="高级定义列表 request"
           request={async () => {
             fn();
-            await waitTime(200);
-            return Promise.resolve({
-              success: true,
-              data: { id: '这是一段文本', date: '20200730', money: '12121' },
+            return new Promise((resolve) => {
+              setTimeout(() => {
+                resolve({
+                  success: true,
+                  data: {
+                    id: '这是一段文本',
+                    date: '20200730',
+                    money: '12121',
+                  },
+                });
+              }, 2000);
             });
           }}
           extra={
@@ -133,30 +165,53 @@ describe('descriptions', () => {
             </Button>
           }
         >
+          test reload
           <ProDescriptions.Item label="文本" dataIndex="id" />
-          <ProDescriptions.Item dataIndex="date" label="日期" valueType="date" />
-          <ProDescriptions.Item label="money" dataIndex="money" valueType="money" />
+          <ProDescriptions.Item
+            dataIndex="date"
+            label="日期"
+            valueType="date"
+          />
+          <ProDescriptions.Item
+            label="money"
+            dataIndex="money"
+            valueType="money"
+            renderFormItem={() => <Input />}
+          />
         </ProDescriptions>
       );
     };
     const html = render(<Reload />);
-    await waitForComponentToPaint(html, 500);
 
-    act(() => {
-      html.queryByText('刷新')?.click();
+    await act(() => {
+      return vi.runOnlyPendingTimers();
+    });
+
+    await html.findAllByText('这是一段文本');
+    await waitFor(() => {
+      expect(fn).toBeCalledTimes(1);
     });
     act(() => {
       html.queryByText('刷新')?.click();
     });
-    await waitForComponentToPaint(html);
+    act(() => {
+      actionRef.current?.reload();
+    });
+    act(() => {
+      actionRef.current?.reload();
+    });
 
-    // 因为有 loading 的控制，所有只会触发两次
-    expect(fn).toBeCalledTimes(2);
+    await waitFor(() => {
+      // 因为有 loading 的控制，所有只会触发两次
+      expect(fn).toBeCalledTimes(2);
+    });
+
+    vi.useRealTimers();
   });
 
   it('🥩 test reload by params', async () => {
-    const fn = jest.fn();
-
+    const fn = vi.fn();
+    vi.useFakeTimers();
     const html = render(
       <ProDescriptions
         title="高级定义列表 request"
@@ -175,10 +230,23 @@ describe('descriptions', () => {
       >
         <ProDescriptions.Item label="文本" dataIndex="id" />
         <ProDescriptions.Item dataIndex="date" label="日期" valueType="date" />
-        <ProDescriptions.Item label="money" dataIndex="money" valueType="money" />
+        <ProDescriptions.Item
+          label="money"
+          dataIndex="money"
+          valueType="money"
+        />
       </ProDescriptions>,
     );
-    await waitForComponentToPaint(html, 300);
+
+    await html.findAllByText('这是一段文本');
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
+
+    await waitFor(() => {
+      expect(fn).toBeCalledTimes(1);
+    });
 
     act(() => {
       html.rerender(
@@ -199,21 +267,37 @@ describe('descriptions', () => {
           params={{ name: 'qixian' }}
         >
           <ProDescriptions.Item label="文本" dataIndex="id" />
-          <ProDescriptions.Item dataIndex="date" label="日期" valueType="date" />
-          <ProDescriptions.Item label="money" dataIndex="money" valueType="money" />
+          <ProDescriptions.Item
+            dataIndex="date"
+            label="日期"
+            valueType="date"
+          />
+          <ProDescriptions.Item
+            label="money"
+            dataIndex="money"
+            valueType="money"
+          />
         </ProDescriptions>,
       );
     });
 
-    await waitForComponentToPaint(html);
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
 
-    expect(fn).toBeCalledTimes(2);
+    await html.findAllByText('这是一段文本');
+
+    await waitFor(() => {
+      expect(fn).toBeCalledTimes(2);
+    });
+
+    vi.useRealTimers();
   });
 
   it('🥩 test request error', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
 
-    const html = render(
+    render(
       <ProDescriptions
         title="高级定义列表 request"
         request={async () => {
@@ -228,15 +312,20 @@ describe('descriptions', () => {
       >
         <ProDescriptions.Item label="文本" dataIndex="id" />
         <ProDescriptions.Item dataIndex="date" label="日期" valueType="date" />
-        <ProDescriptions.Item label="money" dataIndex="money" valueType="money" />
+        <ProDescriptions.Item
+          label="money"
+          dataIndex="money"
+          valueType="money"
+        />
       </ProDescriptions>,
     );
-    await waitForComponentToPaint(html, 300);
 
-    expect(fn).toBeCalledTimes(1);
+    await waitFor(() => {
+      expect(fn).toBeCalledTimes(1);
+    });
   });
 
-  it('🏊 Progress', () => {
+  it('🏊 Progress', async () => {
     const html = render(
       <ProDescriptions>
         <ProDescriptions.Item label="进度条1" valueType="progress">
@@ -250,20 +339,27 @@ describe('descriptions', () => {
         </ProDescriptions.Item>
       </ProDescriptions>,
     );
-    expect(html.baseElement.querySelector('.ant-progress-text')?.textContent).toEqual('40%');
-    expect(
-      !!html.baseElement
-        .querySelectorAll('.ant-progress-text')?.[1]
-        ?.querySelector('.anticon-close-circle'),
-    ).toBeTruthy();
-    expect(
-      !!html.baseElement
-        .querySelectorAll('.ant-progress-text')?.[2]
-        ?.querySelector('.anticon-check-circle'),
-    ).toBeTruthy();
+    await waitFor(() => {
+      expect(
+        html.baseElement.querySelector('.ant-progress-text')?.textContent,
+      ).toEqual('40%');
+    });
+
+    await waitFor(() => {
+      expect(
+        !!html.baseElement
+          .querySelectorAll('.ant-progress-text')?.[1]
+          ?.querySelector('.anticon-close-circle'),
+      ).toBeTruthy();
+      expect(
+        !!html.baseElement
+          .querySelectorAll('.ant-progress-text')?.[2]
+          ?.querySelector('.anticon-check-circle'),
+      ).toBeTruthy();
+    });
   });
 
-  it('🏊 ProDescriptions support order', () => {
+  it('🏊 ProDescriptions support order', async () => {
     const html = render(
       <ProDescriptions
         dataSource={{
@@ -315,11 +411,13 @@ describe('descriptions', () => {
       />,
     );
 
-    expect(
-      wrapper.baseElement.querySelector(
-        'span.ant-descriptions-item-content div.ant-typography-copy',
-      ),
-    ).toBeTruthy();
+    await waitFor(() => {
+      expect(
+        wrapper.baseElement.querySelector(
+          'span.ant-descriptions-item-content button.ant-typography-copy',
+        ),
+      ).toBeTruthy();
+    });
 
     wrapper.rerender(
       <ProDescriptions
@@ -340,10 +438,14 @@ describe('descriptions', () => {
         ]}
       />,
     );
-    expect(
-      wrapper.baseElement.querySelectorAll('.ant-descriptions-item-content .ant-typography-copy')
-        .length,
-    ).toBe(0);
+
+    await waitFor(() => {
+      expect(
+        wrapper.baseElement.querySelectorAll(
+          '.ant-descriptions-item-content .ant-typography-copy',
+        ).length,
+      ).toBe(0);
+    });
 
     wrapper.unmount();
   });

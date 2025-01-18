@@ -2,6 +2,668 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.31.4](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.31.3...@ant-design/pro-form@2.31.4) (2025-01-18)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.31.3](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.31.2...@ant-design/pro-form@2.31.3) (2025-01-06)
+
+### Bug Fixes
+
+- add dateRange type && typo in word ([#8884](https://github.com/ant-design/pro-components/issues/8884)) ([30b6f01](https://github.com/ant-design/pro-components/commit/30b6f01cf0207cc7e378abdae82dbbbb33c925d4))
+- add emptyText fieldItem props ([#8888](https://github.com/ant-design/pro-components/issues/8888)) ([b2627ff](https://github.com/ant-design/pro-components/commit/b2627ff93aa50a51f07b5ee5e899b807cd26c6e2))
+- **locale:** add missing newline at end of file for sv_SE, nl_NL, and ro_RO locales ([d0f573f](https://github.com/ant-design/pro-components/commit/d0f573f325db4e863db1fbf70afc25ccf3dde7a7))
+
+### Performance Improvements
+
+- add pro-componets path ([#8881](https://github.com/ant-design/pro-components/issues/8881)) ([43ceba3](https://github.com/ant-design/pro-components/commit/43ceba3660ddc8465e5f519711583602b9a6ea7a))
+
+## [2.31.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.31.1...@ant-design/pro-form@2.31.2) (2024-11-14)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.31.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.31.0...@ant-design/pro-form@2.31.1) (2024-10-22)
+
+### Bug Fixes
+
+- **form:** 优化 URL 参数合并逻辑以提高性能和可读性 ([3e026c6](https://github.com/ant-design/pro-components/commit/3e026c62d9be37732117fa4697e92f174fea87f1))
+- **package:** 更新 repository URL 格式为 git+ssh 以确保一致性 ([8882d51](https://github.com/ant-design/pro-components/commit/8882d5164d8b14f8971bf9f34a339d282ac766ba))
+
+# [2.31.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.30.2...@ant-design/pro-form@2.31.0) (2024-10-17)
+
+### Bug Fixes
+
+- replace `lodash-es` imports with `lodash` in CJS builds ([#8754](https://github.com/ant-design/pro-components/issues/8754)) ([3ef9283](https://github.com/ant-design/pro-components/commit/3ef9283a4cf52b8106d049af49f41dc37bb448b1))
+
+### Features
+
+- added exports to support ESM environments such as vitest ([#8738](https://github.com/ant-design/pro-components/issues/8738)) ([71c4be9](https://github.com/ant-design/pro-components/commit/71c4be9c9ca5942154e0473e62be608d784d53fc))
+
+## [2.30.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.30.1...@ant-design/pro-form@2.30.2) (2024-09-12)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.30.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.30.0...@ant-design/pro-form@2.30.1) (2024-09-12)
+
+### Bug Fixes
+
+- **form:** add formRef.current error ([b4c88c5](https://github.com/ant-design/pro-components/commit/b4c88c55b6ae3c9ed977704ddbf45e159434fdbd))
+
+# [2.30.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.29.0...@ant-design/pro-form@2.30.0) (2024-09-05)
+
+### Bug Fixes
+
+- 修复如果没传 backgroundImageUrl 会导致 url("undefined") 发送一次请求 ([#8689](https://github.com/ant-design/pro-components/issues/8689)) ([8acaa16](https://github.com/ant-design/pro-components/commit/8acaa160738fdbe410b85d66cb64375083927e16))
+- **form:** props title is not assignable to type ReactNode ([#8682](https://github.com/ant-design/pro-components/issues/8682)) ([991ab91](https://github.com/ant-design/pro-components/commit/991ab9140478262e1776e5b750993860fa1c297f))
+
+### Features
+
+- **Form:** FormRef support forward nativeElement ([#8632](https://github.com/ant-design/pro-components/issues/8632)) ([d113207](https://github.com/ant-design/pro-components/commit/d1132070c4d7b2df3bfaebe33615faa007ea6ceb))
+
+# [2.29.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.28.4...@ant-design/pro-form@2.29.0) (2024-08-05)
+
+### Bug Fixes
+
+- **form:** correct line height in list action ([#8584](https://github.com/ant-design/pro-components/issues/8584)) ([e2b2ea6](https://github.com/ant-design/pro-components/commit/e2b2ea65185ef6e840f0f26992dae3d7cead27fe))
+- **form:** pass the OptionType type of ProFormSelect to the inner Select ([#8568](https://github.com/ant-design/pro-components/issues/8568)) ([6d8b99f](https://github.com/ant-design/pro-components/commit/6d8b99f356c43d20ce6bc868fe28d300af3f7c29))
+
+### Features
+
+- **form:** export ProFormTreeSelectProps ([#8589](https://github.com/ant-design/pro-components/issues/8589)) ([55b912c](https://github.com/ant-design/pro-components/commit/55b912ccec854824b38f2d6f6a6cd39fb028204d))
+
+### Performance Improvements
+
+- lodash => lodash-es ([#8606](https://github.com/ant-design/pro-components/issues/8606)) ([455b4f1](https://github.com/ant-design/pro-components/commit/455b4f1bb1edfd896c04d98c37da6f97fb2428cb))
+
+## [2.28.4](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.28.3...@ant-design/pro-form@2.28.4) (2024-07-18)
+
+### Bug Fixes
+
+- **form:** upload use flex style ([d0e410c](https://github.com/ant-design/pro-components/commit/d0e410cff6133e7ae83f48aebf15c86d94e9ad56))
+
+## [2.28.3](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.28.2...@ant-design/pro-form@2.28.3) (2024-07-16)
+
+### Bug Fixes
+
+- **form:** fix ConfigProvider.useConfig unsupport antd@4 error ([#8567](https://github.com/ant-design/pro-components/issues/8567)) ([59e9cd5](https://github.com/ant-design/pro-components/commit/59e9cd5c0df0c17f556e9bc4153fa451434993d8))
+
+## [2.28.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.28.1...@ant-design/pro-form@2.28.2) (2024-07-15)
+
+### Bug Fixes
+
+- **form:** Digit support stringMode ([5075113](https://github.com/ant-design/pro-components/commit/50751136faacb021f8322645364f4bcc3f3453d4))
+- **form:** fix FormList size=small, icon is default size error ([d797fa7](https://github.com/ant-design/pro-components/commit/d797fa7f98c1042e531758ae8a3e5d32950c783b))
+
+## [2.28.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.28.0...@ant-design/pro-form@2.28.1) (2024-06-21)
+
+### Bug Fixes
+
+- **form:** formItem help render type ([#8482](https://github.com/ant-design/pro-components/issues/8482)) ([a447cf5](https://github.com/ant-design/pro-components/commit/a447cf511a68e00c142fd9837762920282df6916))
+
+# [2.28.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.27.0...@ant-design/pro-form@2.28.0) (2024-06-08)
+
+### Bug Fixes
+
+- **form:** 修复 openChange 打开时不触发问题 ([#8403](https://github.com/ant-design/pro-components/issues/8403)) ([5a1153b](https://github.com/ant-design/pro-components/commit/5a1153bcfa6de5d48e30d85401fa748ecd86864d))
+
+### Features
+
+- **form:** add form item help render type ([#8462](https://github.com/ant-design/pro-components/issues/8462)) ([08ab425](https://github.com/ant-design/pro-components/commit/08ab425e396e0476522b383d08ecbced088ebd33))
+
+# [2.27.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.26.5...@ant-design/pro-form@2.27.0) (2024-05-20)
+
+### Features
+
+- add onBlur to filedChildren ([#8418](https://github.com/ant-design/pro-components/issues/8418)) ([3b104b9](https://github.com/ant-design/pro-components/commit/3b104b9e590e1eef139a5164bffc70b243389db3))
+
+## [2.26.6](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.26.5...@ant-design/pro-form@2.26.6) (2024-04-21)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.26.5](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.26.4...@ant-design/pro-form@2.26.5) (2024-04-21)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.26.4](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.26.2...@ant-design/pro-form@2.26.4) (2024-04-20)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.26.3](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.26.2...@ant-design/pro-form@2.26.3) (2024-04-19)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.26.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.26.1...@ant-design/pro-form@2.26.2) (2024-04-19)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.26.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.26.0...@ant-design/pro-form@2.26.1) (2024-04-17)
+
+### Bug Fixes
+
+- replace login url ([#8315](https://github.com/ant-design/pro-components/issues/8315)) ([a2294c3](https://github.com/ant-design/pro-components/commit/a2294c3fa4efe2259d6ad3c00500e4fa5a5beab7))
+
+# [2.26.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.25.1...@ant-design/pro-form@2.26.0) (2024-04-17)
+
+### Bug Fixes
+
+- **form:** FilterDropdown onClear setTempValue null ([#8305](https://github.com/ant-design/pro-components/issues/8305)) ([6548873](https://github.com/ant-design/pro-components/commit/6548873523505994daa22c30217b89c7313e8187))
+- **form:** onOpenChange fires twice when opening ModalForm ([#8311](https://github.com/ant-design/pro-components/issues/8311)) ([f12ef2b](https://github.com/ant-design/pro-components/commit/f12ef2ba4252122210b1242ca3552c8f3730c944))
+
+### Features
+
+- **form:** form list support transform ([7ea4fd1](https://github.com/ant-design/pro-components/commit/7ea4fd180b686b261e103cf5ca9b46f6c3355605))
+
+## [2.25.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.25.0...@ant-design/pro-form@2.25.1) (2024-03-27)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+# [2.25.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.24.5...@ant-design/pro-form@2.25.0) (2024-03-20)
+
+### Features
+
+- **form:** ProFormFieldSet support funtion ([efbdab6](https://github.com/ant-design/pro-components/commit/efbdab6bb564a1bde4679b2069acdf3041f96a5c))
+
+## [2.24.5](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.24.4...@ant-design/pro-form@2.24.5) (2024-03-15)
+
+### Bug Fixes
+
+- **components:** remove deprecated tip props ([85de8a2](https://github.com/ant-design/pro-components/commit/85de8a2bad41a21254719ff7f1df5328e42fd0fb))
+- **form:** PasswordStrength support morse options ([3ab9f11](https://github.com/ant-design/pro-components/commit/3ab9f11bf0307d4d0e127cb66c9042c72645dc64))
+- **list:** support add string line ([9ec366d](https://github.com/ant-design/pro-components/commit/9ec366d3d1ef09587e48a3d98ab5ffe584f3248c))
+- **QueryFilter:** 修复 ProFormDependency 在 QueryFilter 中失效的问题 ([#8212](https://github.com/ant-design/pro-components/issues/8212)) ([fdc5418](https://github.com/ant-design/pro-components/commit/fdc5418b4a12775819a0caafad580236afa7a607))
+
+## [2.24.4](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.24.3...@ant-design/pro-form@2.24.4) (2024-01-31)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.24.3](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.24.2...@ant-design/pro-form@2.24.3) (2024-01-18)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.24.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.24.1...@ant-design/pro-form@2.24.2) (2024-01-18)
+
+### Bug Fixes
+
+- **form:** 修复默认情况下 sumbitter render 和 render 时候 dom 位置不一致的问题 ([#8096](https://github.com/ant-design/pro-components/issues/8096)) ([96d2658](https://github.com/ant-design/pro-components/commit/96d26580383a0a763027ad99b5f78f8dc60f2903))
+- **form:** fix DrawerForm and ModalForm button error ([7bf4b30](https://github.com/ant-design/pro-components/commit/7bf4b30938275278f546d740a3ef5076b97872be))
+
+## [2.24.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.24.0...@ant-design/pro-form@2.24.1) (2024-01-15)
+
+### Bug Fixes
+
+- **form:** fix ProFormPage submit error ([cf32be9](https://github.com/ant-design/pro-components/commit/cf32be9701f3fce38f79567340ec11b1ad524763))
+
+# [2.24.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.23.2...@ant-design/pro-form@2.24.0) (2024-01-15)
+
+### Bug Fixes
+
+- **form:** add playsInline props ([e1233d1](https://github.com/ant-design/pro-components/commit/e1233d1eb9dde02a5fd74a176586dc2279fada81)), closes [#8011](https://github.com/ant-design/pro-components/issues/8011)
+- **form:** no set maxHeight ([64dc9f7](https://github.com/ant-design/pro-components/commit/64dc9f77e6ca6333b3dfc4f42ad74cc11a3df051))
+- **form:** remove extra `div` ([#7987](https://github.com/ant-design/pro-components/issues/7987)) ([d9bee22](https://github.com/ant-design/pro-components/commit/d9bee225021b9c50e7a25e5e657ed9432fef0f74))
+- **form:** 修复 dateFormatter 使用 string 类型提示错误 ([#8029](https://github.com/ant-design/pro-components/issues/8029)) ([6d764ad](https://github.com/ant-design/pro-components/commit/6d764ad498405ad59f4fda71db1b0c632d8150a1))
+- **form:** 修复特殊情况（不使用 ProFormMoney 使用 FieldMoney）下格式化错误的问题 ([#8024](https://github.com/ant-design/pro-components/issues/8024)) ([c321689](https://github.com/ant-design/pro-components/commit/c32168973008ddfe7d9c4bef79e1cbd46387b8d3))
+- **form:** 修复特殊情况下多出 moneySymbol 的问题 ([#8004](https://github.com/ant-design/pro-components/issues/8004)) ([f9f0a63](https://github.com/ant-design/pro-components/commit/f9f0a63e9f18950754f6ba6efaead3ab8dcfdb5d))
+- **list:** 修复 ProFormList 透传部分属性到 FormItem 中导致的 react 警告 ([#8051](https://github.com/ant-design/pro-components/issues/8051)) ([ebc08bf](https://github.com/ant-design/pro-components/commit/ebc08bf49248156788448cbf94754c67d5ee1ba0))
+
+### Features
+
+- **form:** 添加 FormItemRender 组件 ([#8012](https://github.com/ant-design/pro-components/issues/8012)) ([bfd905e](https://github.com/ant-design/pro-components/commit/bfd905ef97b948e4f79ab6afee4005c92ac61d14))
+
+## [2.23.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.23.1...@ant-design/pro-form@2.23.2) (2023-12-12)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.23.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.23.0...@ant-design/pro-form@2.23.1) (2023-11-22)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+# [2.23.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.22.5...@ant-design/pro-form@2.23.0) (2023-11-20)
+
+### Features
+
+- **form:** ProFormCaptcha onTiming callback ([#7908](https://github.com/ant-design/pro-components/issues/7908)) ([b04a280](https://github.com/ant-design/pro-components/commit/b04a2809773df13959110e64179a6c36eb136c15))
+
+## [2.22.5](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.22.4...@ant-design/pro-form@2.22.5) (2023-11-15)
+
+### Bug Fixes
+
+- **form:** fix statusRender no work error ([a94f13e](https://github.com/ant-design/pro-components/commit/a94f13eeb9993c96d9f660a1f16e1255b701b04d))
+
+## [2.22.4](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.22.3...@ant-design/pro-form@2.22.4) (2023-11-15)
+
+### Bug Fixes
+
+- **form:** PasssWordStrength remove progressDom ([77099e4](https://github.com/ant-design/pro-components/commit/77099e4728c5539325109025c369598ae7e0df82))
+
+## [2.22.3](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.22.2...@ant-design/pro-form@2.22.3) (2023-11-15)
+
+### Bug Fixes
+
+- **form:** PasssWord statusRender support value ([5abe403](https://github.com/ant-design/pro-components/commit/5abe403aecc3d98b365c8b5fa75763f8b79a494d))
+- **form:** PasssWord use Progress step ([ee6beb6](https://github.com/ant-design/pro-components/commit/ee6beb6d35ec6b58a06e2357a7616dac09252b16))
+- **form:** PassWord getPercent support status ([7c1bf34](https://github.com/ant-design/pro-components/commit/7c1bf34115e2ff0eeafea4545261e35591347e3d))
+
+## [2.22.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.22.1...@ant-design/pro-form@2.22.2) (2023-11-15)
+
+### Bug Fixes
+
+- **form:** Password support strengthText ([fcade9f](https://github.com/ant-design/pro-components/commit/fcade9f3bce22cb032ad5c00a71fc22035e224d2))
+
+## [2.22.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.22.0...@ant-design/pro-form@2.22.1) (2023-11-15)
+
+### Bug Fixes
+
+- **form:** Password support popoverProps ([39aa69b](https://github.com/ant-design/pro-components/commit/39aa69b9b38f9cafe2e3df1c66da78d6c784ad6d))
+
+# [2.22.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.21.6...@ant-design/pro-form@2.22.0) (2023-11-14)
+
+### Features
+
+- **from:** ProForm support statusRender ([fb8b42e](https://github.com/ant-design/pro-components/commit/fb8b42e14175e2cdc4641c39b1f5059c98ae6d4d))
+
+## [2.21.6](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.21.5...@ant-design/pro-form@2.21.6) (2023-10-26)
+
+### Bug Fixes
+
+- **form:** fix addonWarpStyle no work error ([e5374b7](https://github.com/ant-design/pro-components/commit/e5374b78cea0e4ba938759c91df1f5dafe1fcf7c))
+
+## [2.21.5](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.21.4...@ant-design/pro-form@2.21.5) (2023-10-26)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.21.4](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.21.3...@ant-design/pro-form@2.21.4) (2023-10-24)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.21.3](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.21.2...@ant-design/pro-form@2.21.3) (2023-10-19)
+
+### Bug Fixes
+
+- **select:** remove deprecated warning ([#7793](https://github.com/ant-design/pro-components/issues/7793)) ([c6249f0](https://github.com/ant-design/pro-components/commit/c6249f0011fac78f5b535160cb65ac96d64c279e))
+
+## [2.21.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.21.1...@ant-design/pro-form@2.21.2) (2023-10-13)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.21.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.21.0...@ant-design/pro-form@2.21.1) (2023-10-11)
+
+### Bug Fixes
+
+- **form:** fix loginPage style error ([80ace22](https://github.com/ant-design/pro-components/commit/80ace22a7628fab9e9070e482706096e6d8d44d7))
+- **form:** 首次同步到 url 参数时也执行 syncToUrl ([#7741](https://github.com/ant-design/pro-components/issues/7741)) ([f733b47](https://github.com/ant-design/pro-components/commit/f733b47a372fcf450c151cc43f72dfa99eaee293))
+
+# [2.21.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.20.1...@ant-design/pro-form@2.21.0) (2023-09-26)
+
+### Features
+
+- **form:** LoginFormPage support backgroundVideoUrl ([6dc50b0](https://github.com/ant-design/pro-components/commit/6dc50b0eea177dac53fa16d354ae368766e001a6))
+
+## [2.20.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.20.0...@ant-design/pro-form@2.20.1) (2023-09-26)
+
+### Bug Fixes
+
+- **form:** fix Captcha style no work error ([f31381d](https://github.com/ant-design/pro-components/commit/f31381dab2fb966eb0223e33cabfd7d3af7b88fc))
+
+# [2.20.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.19.0...@ant-design/pro-form@2.20.0) (2023-09-26)
+
+### Features
+
+- **form:** support more style config ([b8c3954](https://github.com/ant-design/pro-components/commit/b8c39542ffc2d3c7909338c02738e84a3804f13a))
+
+# [2.19.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.18.11...@ant-design/pro-form@2.19.0) (2023-09-26)
+
+### Bug Fixes
+
+- **form:** the `onChange` event in `ProFormUploadButton` has been triggered multiple times ([#7732](https://github.com/ant-design/pro-components/issues/7732)) ([a76b18c](https://github.com/ant-design/pro-components/commit/a76b18c2f37d16285bcf973081834e3e95d33754))
+
+### Features
+
+- **form:** new LoginFormPage style ([#7734](https://github.com/ant-design/pro-components/issues/7734)) ([1bc5453](https://github.com/ant-design/pro-components/commit/1bc54531ad3aebac6fc8dc7904dc2299987951c5))
+
+## [2.18.11](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.18.10...@ant-design/pro-form@2.18.11) (2023-09-25)
+
+### Bug Fixes
+
+- **layout:** 统一 PageContainer 计算到 styles.ts 中 ([#7699](https://github.com/ant-design/pro-components/issues/7699)) ([ed5c61c](https://github.com/ant-design/pro-components/commit/ed5c61ced2bda9e0f6bab22f3c942792eec682b6))
+
+## [2.18.10](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.18.9...@ant-design/pro-form@2.18.10) (2023-09-19)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.18.9](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.18.8...@ant-design/pro-form@2.18.9) (2023-09-18)
+
+### Bug Fixes
+
+- **layout:** 默认宽度更改为 1152 ([84cc927](https://github.com/ant-design/pro-components/commit/84cc9274d5a161b171254b2039a78b2a6942b375))
+- **table:** less render function ([b3ef405](https://github.com/ant-design/pro-components/commit/b3ef405b2e1fcfe688f98096520a828b5d098ed3))
+
+## [2.18.8](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.18.7...@ant-design/pro-form@2.18.8) (2023-09-18)
+
+### Bug Fixes
+
+- **form:** form list support readonly ([6407072](https://github.com/ant-design/pro-components/commit/6407072ea4cc3cc6d1d5a8d9f7bea99cdfc6b372))
+- **table:** EditableProTable reset FormItem grid ([c53ecce](https://github.com/ant-design/pro-components/commit/c53ecce5d82553f952b19db22903970f13a586a5))
+
+## [2.18.7](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.18.6...@ant-design/pro-form@2.18.7) (2023-09-14)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.18.6](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.18.5...@ant-design/pro-form@2.18.6) (2023-09-07)
+
+### Bug Fixes
+
+- **form:** 修复 DrawerForm With 控制权重失效的问题 ([#7642](https://github.com/ant-design/pro-components/issues/7642)) ([50d7e4e](https://github.com/ant-design/pro-components/commit/50d7e4e442bc9a93b885d499bda9273947e47381))
+
+## [2.18.5](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.18.4...@ant-design/pro-form@2.18.5) (2023-09-06)
+
+### Bug Fixes
+
+- **form:** dependency 支持 colSize ([#7611](https://github.com/ant-design/pro-components/issues/7611)) ([27436cc](https://github.com/ant-design/pro-components/commit/27436cc6351cfaa535d1ec9aef1f74e567ef44d7))
+- **form:** fix formList containerClassName and containerStyle no work error ([7a2c9e0](https://github.com/ant-design/pro-components/commit/7a2c9e0ddeb580b618f87773ff336c382be5f38a))
+- **form:** fix marginBlockEnd no use marginLG error ([6e5f384](https://github.com/ant-design/pro-components/commit/6e5f384aa9663e5859cfbceb0d328099ebf36fc8))
+- remove stringify ([25d2c42](https://github.com/ant-design/pro-components/commit/25d2c42a0bda673a0b40b5ae56bd0a852998ecd1))
+
+## [2.18.4](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.18.3...@ant-design/pro-form@2.18.4) (2023-08-30)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.18.3](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.18.2...@ant-design/pro-form@2.18.3) (2023-08-29)
+
+### Bug Fixes
+
+- **form:** 解决因 stringify 导致死循环的问题 ([#7599](https://github.com/ant-design/pro-components/issues/7599)) ([d1ab1d1](https://github.com/ant-design/pro-components/commit/d1ab1d1a256cfe41beba7f69abf3588de7dbd446))
+
+## [2.18.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.18.1...@ant-design/pro-form@2.18.2) (2023-08-28)
+
+### Bug Fixes
+
+- **form:** fix FormItem name is null，but has data error ([#7583](https://github.com/ant-design/pro-components/issues/7583)) ([f8514e3](https://github.com/ant-design/pro-components/commit/f8514e33e57dd448398a34a2ecd76baf6e0a36d9))
+- **layout:** 修复 sider token 样式问题 ([#7574](https://github.com/ant-design/pro-components/issues/7574)) ([c911dff](https://github.com/ant-design/pro-components/commit/c911dff10749e2278e28505ff08d531ee6e95d56))
+
+## [2.18.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.18.0...@ant-design/pro-form@2.18.1) (2023-08-17)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+# [2.18.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.17.2...@ant-design/pro-form@2.18.0) (2023-08-10)
+
+### Features
+
+- **field:** 调整 field color 为 antd 新的 ColorPicker ([#7403](https://github.com/ant-design/pro-components/issues/7403)) ([387ab8f](https://github.com/ant-design/pro-components/commit/387ab8f7fd5d6eb99ebd1458e76712cfce63483a))
+- **form:** transform 支持深合并 ([#7494](https://github.com/ant-design/pro-components/issues/7494)) ([f9372ce](https://github.com/ant-design/pro-components/commit/f9372ce89f6b2f2c53edd7bcda95a89edc211dd3))
+
+## [2.17.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.17.1...@ant-design/pro-form@2.17.2) (2023-08-04)
+
+### Bug Fixes
+
+- **form:** form field support moblie width best ([56ccc63](https://github.com/ant-design/pro-components/commit/56ccc63ef0ef1ddcd457782555d91134bcbec6e6))
+- **form:** update `ReturnType<SearchConvertKeyFn>` ([#7462](https://github.com/ant-design/pro-components/issues/7462)) ([e19dd9e](https://github.com/ant-design/pro-components/commit/e19dd9e68a14bae8dbb6baa756a643df8cab4a9b))
+
+## [2.17.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.17.0...@ant-design/pro-form@2.17.1) (2023-07-31)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+# [2.17.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.16.2...@ant-design/pro-form@2.17.0) (2023-07-31)
+
+### Features
+
+- **form:** StepForm added layoutRender props ([#7431](https://github.com/ant-design/pro-components/issues/7431)) ([3657b98](https://github.com/ant-design/pro-components/commit/3657b98ec779606979fd03e7fbec81f606c03a81))
+
+## [2.16.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.16.1...@ant-design/pro-form@2.16.2) (2023-07-24)
+
+### Bug Fixes
+
+- **form:** ProForm support readonly ([e466f4e](https://github.com/ant-design/pro-components/commit/e466f4ed72340b4c7f8fc1d5f23896a05609e989))
+- **form:** ProFormSet support lightProps ([0593fe1](https://github.com/ant-design/pro-components/commit/0593fe1100b9119e3ac2cf60e3994fb5f419e56f))
+- **form:** StepForm support moblie width ([6eee22f](https://github.com/ant-design/pro-components/commit/6eee22fd3d1fb5ced78c75805dda6325911cf1dc))
+
+## [2.16.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.16.0...@ant-design/pro-form@2.16.1) (2023-07-19)
+
+### Bug Fixes
+
+- **layout:** fix sider collpse no work error ([e17dee6](https://github.com/ant-design/pro-components/commit/e17dee6be22b21563d02775e460a331870ff557e)), closes [/github.com/ant-design/pro-components/issues/7398#issuecomment-1641911484](https://github.com//github.com/ant-design/pro-components/issues/7398/issues/issuecomment-1641911484)
+
+# [2.16.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.15.1...@ant-design/pro-form@2.16.0) (2023-07-19)
+
+### Bug Fixes
+
+- **form:** Fix the issue of the ProFormMoney component causing duplicate currency symbols when using trigger=onBlur ([bc94215](https://github.com/ant-design/pro-components/commit/bc9421543f4fb49774b4844b60dda39d19e52307))
+- **form:** ModalForm and DrawerForm support params type ([76470d8](https://github.com/ant-design/pro-components/commit/76470d81a88909d4b21ba3b06606434801e02007))
+- **form:** support OptionType types ([189f933](https://github.com/ant-design/pro-components/commit/189f9338be78af8dbdc54cb74432844a51b2c0c6))
+- **form:** 修复当 LightFilter 折叠模式 icon 样式问题 ([#7388](https://github.com/ant-design/pro-components/issues/7388)) ([bba664a](https://github.com/ant-design/pro-components/commit/bba664a955376d05284e5da81082cc002dd339bd))
+
+### Features
+
+- **form:** drawer support resizable ([#7288](https://github.com/ant-design/pro-components/issues/7288)) ([3f5cbe6](https://github.com/ant-design/pro-components/commit/3f5cbe667670b870f930005639f3c1eb7065144d))
+- **form:** StepsForm support multifile StepForm ([ccc35f5](https://github.com/ant-design/pro-components/commit/ccc35f581c18e05391209c6bd66b08a023b2427b))
+
+## [2.15.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.15.0...@ant-design/pro-form@2.15.1) (2023-07-14)
+
+### Bug Fixes
+
+- **form:** Fix the display style of the switch ([8cdeda4](https://github.com/ant-design/pro-components/commit/8cdeda486d2aebd0f290a64c389f298e62c21af1))
+
+# [2.15.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.14.3...@ant-design/pro-form@2.15.0) (2023-07-04)
+
+### Features
+
+- **form:** ProForm 支持第二个泛型参数 ([#7318](https://github.com/ant-design/pro-components/issues/7318)) ([da90c1a](https://github.com/ant-design/pro-components/commit/da90c1a65b96be301f872ae8d91198e4d76aa11f))
+
+## [2.14.3](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.14.2...@ant-design/pro-form@2.14.3) (2023-06-30)
+
+### Bug Fixes
+
+- **form:** fix block when QueryFilter set grid ([393fbe8](https://github.com/ant-design/pro-components/commit/393fbe8d2fd0a960a2eb2c19c7e09670fabb2061))
+- **form:** fix className is undefined error ([a27d453](https://github.com/ant-design/pro-components/commit/a27d453b03c7ede8123c02fc6f773e288ee9660a))
+- **form:** formRef.current change will update formitem list ([5e977db](https://github.com/ant-design/pro-components/commit/5e977db5871271db2d94d2b58d5ddb1e40442b28))
+
+## [2.14.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.14.1...@ant-design/pro-form@2.14.2) (2023-06-19)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.14.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.14.0...@ant-design/pro-form@2.14.1) (2023-06-19)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+# [2.14.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.13.11...@ant-design/pro-form@2.14.0) (2023-06-19)
+
+### Bug Fixes
+
+- **form:** alway use shouldUpdate for json ([7933961](https://github.com/ant-design/pro-components/commit/7933961ccd5de7a67178165039b197f2b53d92e8))
+- **form:** onInit use ProFormInstance ([ad537a5](https://github.com/ant-design/pro-components/commit/ad537a563c1f09dafde29bb2ecff0aa0df24122f))
+
+### Features
+
+- **field:** LightFilter 中使用 ProFormSelect 的两个 bug 修复 ([#7225](https://github.com/ant-design/pro-components/issues/7225)) ([#7233](https://github.com/ant-design/pro-components/issues/7233)) ([b3050e4](https://github.com/ant-design/pro-components/commit/b3050e4e82db6809ce93f6913e3903a9dd05da15))
+
+## [2.13.11](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.13.10...@ant-design/pro-form@2.13.11) (2023-06-16)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.13.10](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.13.9...@ant-design/pro-form@2.13.10) (2023-06-15)
+
+### Bug Fixes
+
+- **form:** fix table render less error ([dcd3888](https://github.com/ant-design/pro-components/commit/dcd3888daafb2fa812f1fb0f1d5bab4451eaee63))
+
+## [2.13.9](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.13.8...@ant-design/pro-form@2.13.9) (2023-06-14)
+
+### Bug Fixes
+
+- **form:** fix shouldUpdate no work error ([ff8bbef](https://github.com/ant-design/pro-components/commit/ff8bbefc6b67d83925e83f2559f0016014748323))
+
+## [2.13.8](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.13.7...@ant-design/pro-form@2.13.8) (2023-06-14)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.13.7](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.13.6...@ant-design/pro-form@2.13.7) (2023-06-12)
+
+### Bug Fixes
+
+- **components:** fix useToken no supoort antd\@4 的问题 ([58b96e9](https://github.com/ant-design/pro-components/commit/58b96e91632c0c84c429d5384c13ee6f3146e017))
+
+## [2.13.6](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.13.5...@ant-design/pro-form@2.13.6) (2023-06-12)
+
+### Bug Fixes
+
+- **compoents:** gap use token margin ([#7204](https://github.com/ant-design/pro-components/issues/7204)) ([bd62243](https://github.com/ant-design/pro-components/commit/bd62243f4bc6a3ea6e97ad5e0db977c84394426f))
+- **components:** remove hashid empty ([b46bb80](https://github.com/ant-design/pro-components/commit/b46bb808db287979fe7d2d5afe115185860422c9))
+- **form:** fix set addonAfter valuePropName will no work error ([8072666](https://github.com/ant-design/pro-components/commit/8072666d47b98bcc172646205f7cb24db6a765b4))
+- **form:** ProFormColorPicker support disable ([973ac28](https://github.com/ant-design/pro-components/commit/973ac28ea2ec5b194013c691c74d8a326134c1a1))
+- **form:** 修复 ProTable 的 columns.proFieldProps 不生效 ([#7205](https://github.com/ant-design/pro-components/issues/7205)) ([91ea897](https://github.com/ant-design/pro-components/commit/91ea8977d422e208f6e29f4c5a4245e51c91ef8a))
+- 修复 select 的 defaultKeyWords 在 schemaForm 下不生效的 bug ([#7195](https://github.com/ant-design/pro-components/issues/7195)) ([68ef5c9](https://github.com/ant-design/pro-components/commit/68ef5c9e1553d4ed514241b437be4ef2ef69687e))
+
+## [2.13.5](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.13.4...@ant-design/pro-form@2.13.5) (2023-06-02)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.13.4](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.13.3...@ant-design/pro-form@2.13.4) (2023-05-31)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.13.3](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.13.2...@ant-design/pro-form@2.13.3) (2023-05-30)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.13.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.13.1...@ant-design/pro-form@2.13.2) (2023-05-30)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.13.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.13.0...@ant-design/pro-form@2.13.1) (2023-05-29)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+# [2.13.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.12.1...@ant-design/pro-form@2.13.0) (2023-05-29)
+
+### Bug Fixes
+
+- **form:** 解决 ProFormList 多重嵌套 ProFormList 下的表单组件未调用 transform 方法问题 ([#7138](https://github.com/ant-design/pro-components/issues/7138)) ([2e83b18](https://github.com/ant-design/pro-components/commit/2e83b184fae0f68013c0c1db39837981f70d1ec3))
+- **list:** 修复 ProFormList 使用 className 无效问题 ([#7128](https://github.com/ant-design/pro-components/issues/7128)) ([6d8c301](https://github.com/ant-design/pro-components/commit/6d8c301f221630e9712ffc1c9d37e12621d5d755))
+- update lock file and fix test case ([d991d5d](https://github.com/ant-design/pro-components/commit/d991d5d6e1d19fa721d9c25ef0318a0c0e134e7e))
+- **form:** use oninit reset formRef ([1deedf2](https://github.com/ant-design/pro-components/commit/1deedf26e0dfb377f883c428f597094353c8c3e3))
+
+### Features
+
+- **table:** use [@dnd-kit](https://github.com/dnd-kit) ([#7131](https://github.com/ant-design/pro-components/issues/7131)) ([26b6aa6](https://github.com/ant-design/pro-components/commit/26b6aa611a0c5d88232cda88ca7cec893ee2160b))
+
+## [2.12.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.12.0...@ant-design/pro-form@2.12.1) (2023-05-18)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+# [2.12.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.11.7...@ant-design/pro-form@2.12.0) (2023-05-15)
+
+### Bug Fixes
+
+- **form:** 修复 form 自定义组件过多卡顿的问题 ([#7018](https://github.com/ant-design/pro-components/issues/7018)) ([ca2e8e1](https://github.com/ant-design/pro-components/commit/ca2e8e1b618b86b48a130df6703ea34e65412079))
+
+### Features
+
+- **form:** rewirte light date form ([#7052](https://github.com/ant-design/pro-components/issues/7052)) ([1cf4bfa](https://github.com/ant-design/pro-components/commit/1cf4bfa39858f03e1aadeb290d40ba8b82cdf170))
+
+## [2.11.7](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.11.6...@ant-design/pro-form@2.11.7) (2023-05-08)
+
+### Bug Fixes
+
+- **form:** fix ModalForm ref less error ([06721c3](https://github.com/ant-design/pro-components/commit/06721c310adde229ce5bcf92bf3ce59100e713df))
+- **table:** table should support dependencies ([#7019](https://github.com/ant-design/pro-components/issues/7019)) ([7addd50](https://github.com/ant-design/pro-components/commit/7addd5031c68720b809bbdd292e828f7b04bfd04))
+
+## [2.11.6](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.11.5...@ant-design/pro-form@2.11.6) (2023-05-04)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.11.5](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.11.4...@ant-design/pro-form@2.11.5) (2023-05-04)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.11.4](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.11.3...@ant-design/pro-form@2.11.4) (2023-04-26)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.11.3](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.11.2...@ant-design/pro-form@2.11.3) (2023-04-26)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.11.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.11.1...@ant-design/pro-form@2.11.2) (2023-04-25)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+## [2.11.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.11.0...@ant-design/pro-form@2.11.1) (2023-04-25)
+
+**Note:** Version bump only for package @ant-design/pro-form
+
+# [2.11.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.10.1...@ant-design/pro-form@2.11.0) (2023-04-25)
+
+### Bug Fixes
+
+- **form:** chage step form first button judge ([#6915](https://github.com/ant-design/pro-components/issues/6915)) ([2a995d9](https://github.com/ant-design/pro-components/commit/2a995d97672e6a9413a78dfa3276fd80c82075f3))
+- **form:** 修复 SchemaFormRef 的问题 ([#6943](https://github.com/ant-design/pro-components/issues/6943)) ([445c8ac](https://github.com/ant-design/pro-components/commit/445c8acfe3677d3d03a2a9c12d2a9542d50d10c0))
+
+### Features
+
+- **form:** add some DateRangePicker components ([#6850](https://github.com/ant-design/pro-components/issues/6850)) ([26cbe28](https://github.com/ant-design/pro-components/commit/26cbe28b4408847a965983049b020b9f4399eddb))
+
+## [2.10.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.10.0...@ant-design/pro-form@2.10.1) (2023-03-27)
+
+### Bug Fixes
+
+- **form:** slove padding was not use ([#6857](https://github.com/ant-design/pro-components/issues/6857)) ([4a5f4e6](https://github.com/ant-design/pro-components/commit/4a5f4e6f27c208d2bcea4eaa9319b422bc708f3a))
+
+# [2.10.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.9.0...@ant-design/pro-form@2.10.0) (2023-03-27)
+
+### Bug Fixes
+
+- **from:** solve queryfilter padding problem ([#6797](https://github.com/ant-design/pro-components/issues/6797)) ([fa92aae](https://github.com/ant-design/pro-components/commit/fa92aae5dc7b43e230b540a5215112c967dfb3cd))
+
+### Features
+
+- **form:** introduce proFieldProps in BaseFormProps and pass it to all Fields with the lowest priority ([#6847](https://github.com/ant-design/pro-components/issues/6847)) ([ff96751](https://github.com/ant-design/pro-components/commit/ff967518d81eb7200ffc570e4b41122f8f25e7eb))
+
+# [2.9.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.8.0...@ant-design/pro-form@2.9.0) (2023-03-14)
+
+### Bug Fixes
+
+- **compoments:** remove .ant-pro dom ([403319f](https://github.com/ant-design/pro-components/commit/403319f2b80489d04101f51d65c3cb4dcbe4595d))
+- **form:** fix AdvancedSearch demo no work error ([226fbac](https://github.com/ant-design/pro-components/commit/226fbac4e214a912a84973f69ccdd1183ffd34f0))
+- **form:** fix collapse button unuse colorPrimary txt ([55b8aab](https://github.com/ant-design/pro-components/commit/55b8aabbc0d65ca7a50072e9c6e41dc91338e3a5))
+
+### Features
+
+- **form:** QueryFilter support submitterColSpanProps ([11dbc0c](https://github.com/ant-design/pro-components/commit/11dbc0cc989602a1c067bec8a9dcd01c1c9d2bec))
+
+# [2.8.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.7.0...@ant-design/pro-form@2.8.0) (2023-03-09)
+
+### Bug Fixes
+
+- **layout:** fix menu item icon style error ([#6745](https://github.com/ant-design/pro-components/issues/6745)) ([87f9656](https://github.com/ant-design/pro-components/commit/87f965682e81d9ce166d140dd418a37a6020abcf))
+
+# [2.7.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.6.0...@ant-design/pro-form@2.7.0) (2023-03-08)
+
+### Features
+
+- **components:** support antd\@5.4.0 ([#6730](https://github.com/ant-design/pro-components/issues/6730)) ([1ac506f](https://github.com/ant-design/pro-components/commit/1ac506f8e46a30089437cdfe58a5f96447c39f7a))
+- **layout:** add ProHelp components ([#6654](https://github.com/ant-design/pro-components/issues/6654)) ([b1a175c](https://github.com/ant-design/pro-components/commit/b1a175c9ecbdf24a26f1cf34e10a92da05ab2b9c)), closes [#6671](https://github.com/ant-design/pro-components/issues/6671) [#6676](https://github.com/ant-design/pro-components/issues/6676)
+
+# [2.6.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.5.8...@ant-design/pro-form@2.6.0) (2023-02-28)
+
+### Bug Fixes
+
+- 修复动态控制是否重渲染 demo 标题修改标签任有 required 提示的问题 ([#6640](https://github.com/ant-design/pro-components/issues/6640)) ([fd33f8c](https://github.com/ant-design/pro-components/commit/fd33f8cef4afa97d0e5964d91fd5c21b18d6cbde))
+
+### Features
+
+- **form:** ProFormTreeSelect support fetchDataOnSearch ([#6638](https://github.com/ant-design/pro-components/issues/6638)) ([4615f43](https://github.com/ant-design/pro-components/commit/4615f43a685b57245a6449454345e449bc8a2c4c))
+
+## [2.5.8](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.5.7...@ant-design/pro-form@2.5.8) (2023-02-17)
+
+### Bug Fixes
+
+- **components:** src alway use es path ([4a13142](https://github.com/ant-design/pro-components/commit/4a1314225c08a60c5cef9d51f061cdf15a69ca13))
+
+## [2.5.7](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.5.6...@ant-design/pro-form@2.5.7) (2023-02-17)
+
+### Bug Fixes
+
+- **components:** fix valuetype no work error ([f6215e9](https://github.com/ant-design/pro-components/commit/f6215e98eaeb46fa979c1ca4ac40ceaa0828f9f3))
+
 ## [2.5.6](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@2.5.5...@ant-design/pro-form@2.5.6) (2023-02-10)
 
 **Note:** Version bump only for package @ant-design/pro-form
@@ -419,7 +1081,7 @@ All notable changes to this project will be documented in this file. See [Conven
 ### Bug Fixes
 
 - **form:** fix sublist getCurrentRowData no work error ([47fe90c](https://github.com/ant-design/pro-components/commit/47fe90c1d90ef6b8e28bdbdda86a915454cb1d64))
-- ’添加一行数据'国际化问题 ([#5469](https://github.com/ant-design/pro-components/issues/5469)) ([85cc727](https://github.com/ant-design/pro-components/commit/85cc7275bb58e52e84f25594952d9612742102a0))
+- ’添加一行数据 ' 国际化问题 ([#5469](https://github.com/ant-design/pro-components/issues/5469)) ([85cc727](https://github.com/ant-design/pro-components/commit/85cc7275bb58e52e84f25594952d9612742102a0))
 - **form:** onlu has one item, no render Collapse ([a3758b0](https://github.com/ant-design/pro-components/commit/a3758b019665d7c707ebad2991fbfc5f09de47c2))
 
 # [1.70.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@1.69.4...@ant-design/pro-form@1.70.0) (2022-06-30)
@@ -860,7 +1522,7 @@ All notable changes to this project will be documented in this file. See [Conven
 
 - **form:** 表单 submitter 增加自动换行属性 ([#4406](https://github.com/ant-design/pro-components/issues/4406)) ([9f755ee](https://github.com/ant-design/pro-components/commit/9f755ee61c1e52a46fb5d3d11b524e5347d48f21))
 - **form:** DateRangePicker in LightFilter format is always set to YYYY-MM-DD ([#4374](https://github.com/ant-design/pro-components/issues/4374)) ([b3b84f2](https://github.com/ant-design/pro-components/commit/b3b84f27e8a315e8539fab9f93569f3b1f33f0db))
-- 重新给 LightFilter 内的表单项指定属性不生效 🐛[BUG] [#4366](https://github.com/ant-design/pro-components/issues/4366) ([#4375](https://github.com/ant-design/pro-components/issues/4375)) ([b0e2ebc](https://github.com/ant-design/pro-components/commit/b0e2ebcc2ae356d69272bfe64b8824fb5fe70c94))
+- 重新给 LightFilter 内的表单项指定属性不生效 🐛\[BUG] [#4366](https://github.com/ant-design/pro-components/issues/4366) ([#4375](https://github.com/ant-design/pro-components/issues/4375)) ([b0e2ebc](https://github.com/ant-design/pro-components/commit/b0e2ebcc2ae356d69272bfe64b8824fb5fe70c94))
 - **form:** fix stepForm props error ([1eec8a2](https://github.com/ant-design/pro-components/commit/1eec8a2ff97c95f3fea8400651ff5e2875561193))
 - fix doc error ([#4370](https://github.com/ant-design/pro-components/issues/4370)) ([438fe64](https://github.com/ant-design/pro-components/commit/438fe64c1d290aeb20f249582a7363740c32d6ae))
 
@@ -1068,7 +1730,7 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### Bug Fixes
 
-- **form:** 修复 ProFormList 的 children 类型错误问题并添加 action 注入([#3835](https://github.com/ant-design/pro-components/issues/3835)) ([5593d4d](https://github.com/ant-design/pro-components/commit/5593d4d55197c685f4c4d92d2b010f3d8fbc9e94))
+- **form:** 修复 ProFormList 的 children 类型错误问题并添加 action 注入 ([#3835](https://github.com/ant-design/pro-components/issues/3835)) ([5593d4d](https://github.com/ant-design/pro-components/commit/5593d4d55197c685f4c4d92d2b010f3d8fbc9e94))
 - **form:** fix Abnormal operation of proformdependency in proform ([#3839](https://github.com/ant-design/pro-components/issues/3839)) ([d107ea9](https://github.com/ant-design/pro-components/commit/d107ea93c4bb8fe08c56cbe8eb52722ff327b9f6))
 - **form:** fix modal and drawer reset error ([#3838](https://github.com/ant-design/pro-components/issues/3838)) ([e76eee7](https://github.com/ant-design/pro-components/commit/e76eee762779a0b3718441b57bc037dc3a5bee89))
 
@@ -1153,7 +1815,7 @@ All notable changes to this project will be documented in this file. See [Conven
 
 - **form:** better FormGroup Space style ([#3562](https://github.com/ant-design/pro-components/issues/3562)) ([ddd89d9](https://github.com/ant-design/pro-components/commit/ddd89d9fbb51349deb8eb10e1a07e190b62c4c77))
 - **form:** if valueType need request, note need request ([#3575](https://github.com/ant-design/pro-components/issues/3575)) ([41bb815](https://github.com/ant-design/pro-components/commit/41bb81540408659256da329fe0eb02e5c1583ea5))
-- **Form:** 当原先在 url 中存在的字段被删除时，应该讲 params 中的该字段设置为 undefined,以便触发 url 同步删除 ([#3558](https://github.com/ant-design/pro-components/issues/3558)) ([cbce2f8](https://github.com/ant-design/pro-components/commit/cbce2f8f6df5b1d19f29424368867c118941579a)), closes [Form#3547](https://github.com/Form/issues/3547) [#3547](https://github.com/ant-design/pro-components/issues/3547)
+- **Form:** 当原先在 url 中存在的字段被删除时，应该讲 params 中的该字段设置为 undefined, 以便触发 url 同步删除 ([#3558](https://github.com/ant-design/pro-components/issues/3558)) ([cbce2f8](https://github.com/ant-design/pro-components/commit/cbce2f8f6df5b1d19f29424368867c118941579a)), closes [Form#3547](https://github.com/Form/issues/3547) [#3547](https://github.com/ant-design/pro-components/issues/3547)
 
 ### Features
 
@@ -1251,7 +1913,7 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### Bug Fixes
 
-- **form:** fix DrawerForm&ModalForm submitter overwirter error ([#3332](https://github.com/ant-design/pro-components/issues/3332)) ([022b19b](https://github.com/ant-design/pro-components/commit/022b19b20f6a53c24107f879804f0d781b684a46))
+- **form:** fix DrawerForm\&ModalForm submitter overwirter error ([#3332](https://github.com/ant-design/pro-components/issues/3332)) ([022b19b](https://github.com/ant-design/pro-components/commit/022b19b20f6a53c24107f879804f0d781b684a46))
 - **form:** ProFormSelect can not get values ([#3321](https://github.com/ant-design/pro-components/issues/3321)) ([fc9e448](https://github.com/ant-design/pro-components/commit/fc9e4487ef0ba661dc9e8c2e9470773d7e246eb0))
 
 ## [1.32.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@1.32.1...@ant-design/pro-form@1.32.2) (2021-07-26)
@@ -1491,7 +2153,7 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### Features
 
-- **form:** creatorRecord support function ([#2383](https://github.com/ant-design/pro-components/issues/2383)) ([e9a5ba9](https://github.com/ant-design/pro-components/commit/e9a5ba9612146277b5b4cf375b5b25695db812af))
+- **form:** creatorRecord support function ([#2383](https://github.com/ant-design/pro-components/issues/2383)) ([e9a5ba9](https://github.com/ant-design/pro-components/commit/e9a5ba9612146277b5b4cf375b5b25695db812af))
 
 ## [1.19.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-form@1.19.0...@ant-design/pro-form@1.19.1) (2021-03-31)
 
@@ -1850,7 +2512,7 @@ All notable changes to this project will be documented in this file. See [Conven
 
 ### Bug Fixes
 
-- **form:** drawerForm&modalForm trigger 区域调整 ([#1063](https://github.com/ant-design/pro-components/issues/1063)) ([4865f50](https://github.com/ant-design/pro-components/commit/4865f50a79f97880064297c40f52ec021d3f40a9))
+- **form:** drawerForm\&modalForm trigger 区域调整 ([#1063](https://github.com/ant-design/pro-components/issues/1063)) ([4865f50](https://github.com/ant-design/pro-components/commit/4865f50a79f97880064297c40f52ec021d3f40a9))
 - **table:** optimize table demos and table style. ([#1105](https://github.com/ant-design/pro-components/issues/1105)) ([6e6437e](https://github.com/ant-design/pro-components/commit/6e6437e621200932a24a9199ee729ff4253d71c0))
 
 ### Features

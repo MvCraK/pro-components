@@ -1,6 +1,10 @@
-import { render } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
+import { cleanup, render } from '@testing-library/react';
+import { act } from 'react';
 import ProSkeleton from '../../packages/skeleton/src/index';
+
+afterEach(() => {
+  cleanup();
+});
 
 describe('skeleton', () => {
   it('🥩 list base use', async () => {
@@ -19,10 +23,14 @@ describe('skeleton', () => {
   });
 
   it('🥩 descriptions api use', async () => {
-    const wrapper = render(<ProSkeleton type="descriptions" pageHeader={false} list={10} />);
+    const wrapper = render(
+      <ProSkeleton type="descriptions" pageHeader={false} list={10} />,
+    );
     expect(wrapper.asFragment()).toMatchSnapshot();
     act(() => {
-      wrapper.rerender(<ProSkeleton type="descriptions" pageHeader={false} list={5} />);
+      wrapper.rerender(
+        <ProSkeleton type="descriptions" pageHeader={false} list={5} />,
+      );
     });
     expect(wrapper.asFragment()).toMatchSnapshot();
   });

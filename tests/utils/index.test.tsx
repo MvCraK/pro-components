@@ -1,5 +1,6 @@
 import { CodeFilled } from '@ant-design/icons';
 import {
+  compareVersions,
   conversionSubmitValue,
   dateArrayFormatter,
   DropdownFooter,
@@ -9,26 +10,29 @@ import {
   isNil,
   isUrl,
   LabelIconTip,
+  lighten,
+  menuOverlayCompatible,
   merge,
   nanoid,
+  openVisibleCompatible,
   parseValueToDay,
   pickProProps,
+  setAlpha,
+  stringify,
   transformKeySubmitValue,
   useDebounceFn,
   useDebounceValue,
-  compareVersions,
-  openVisibleCompatible,
-  menuOverlayCompatible,
-  lighten,
-  setAlpha,
 } from '@ant-design/pro-utils';
-import { act, fireEvent, render } from '@testing-library/react';
+import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import { Form, Input } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
-import moment from 'dayjs';
-import React, { useEffect, useState } from 'react';
-import { waitForComponentToPaint, waitTime } from '../util';
+import moment from 'moment';
+import React, { act, useEffect, useState } from 'react';
+
+afterEach(() => {
+  cleanup();
+});
 
 describe('utils', () => {
   beforeEach(() => {
@@ -47,6 +51,7 @@ describe('utils', () => {
     expect(compareVersions('2.0.0', '1.0.0')).toBe(1);
     expect(compareVersions('1.0.0', '2.0.0')).toBe(-1);
     expect(compareVersions('1.0.0', '1.0.0')).toBe(0);
+    expect(compareVersions('1.0.0', '1.0.0-beta.6')).toBe(1);
   });
 
   it('openVisibleCompatible', () => {
@@ -69,6 +74,7 @@ describe('utils', () => {
   });
 
   it('📅 useDebounceValue', async () => {
+    vi.useFakeTimers();
     const App = (props: { deps: string[] }) => {
       const value = useDebounceValue(props.deps?.[0], 200, props.deps);
 
@@ -77,20 +83,27 @@ describe('utils', () => {
 
     const html = render(<App deps={['name']} />);
 
-    await waitTime(100);
+    await html.findByText('name');
 
     expect(html.baseElement?.textContent).toEqual('name');
 
     act(() => {
       html.rerender(<App deps={['string']} />);
     });
-    await waitTime(100);
+
+    await html.findByText('name');
 
     expect(html.baseElement?.textContent).toEqual('name');
 
-    await waitTime(500);
+    await html.findByText('string');
 
-    expect(html.baseElement?.textContent).toEqual('string');
+    await act(() => {
+      return vi.runOnlyPendingTimers();
+    });
+
+    await waitFor(() => {
+      expect(html.baseElement?.textContent).toEqual('string');
+    });
   });
 
   it('📅 dateArrayFormatter', async () => {
@@ -110,7 +123,18 @@ describe('utils', () => {
     expect(dateArrayString).toEqual('2020-01-01 00:00:00 ~ 2020-01');
   });
 
+  it('📅 dateArrayFormatter support moment function', async () => {
+    const dateArrayString = dateArrayFormatter(
+      [moment('2020-01-01'), moment('2020-01-01')],
+      ['YYYY-MM-DD HH:mm:ss', (value: Dayjs) => value.format('YYYY-MM')],
+    );
+
+    expect(dateArrayString).toEqual('2020-01-01 00:00:00 ~ 2020-01');
+  });
+
   it('📅 useDebounceValue without deps', async () => {
+    vi.useFakeTimers();
+
     const App = (props: { deps: string[] }) => {
       const [, forceUpdate] = useState([]);
       const value = useDebounceValue(props.deps?.[0]);
@@ -126,15 +150,27 @@ describe('utils', () => {
 
     const html = render(<App deps={['name']} />);
 
+    await html.findByText('name');
+
     expect(html.baseElement?.textContent).toEqual('name');
 
     act(() => {
       html.rerender(<App deps={['string']} />);
     });
 
-    waitTime(1000);
+    await html.findByText('name');
 
     expect(html.baseElement?.textContent).toEqual('name');
+
+    await act(() => {
+      return vi.runAllTimers();
+    });
+
+    await waitFor(() => {
+      expect(html.baseElement?.textContent).toEqual('string');
+    });
+
+    vi.useRealTimers();
   });
 
   it('📅 useDebounceFn', async () => {
@@ -143,7 +179,9 @@ describe('utils', () => {
         name: 'string',
       },
     });
-    const fn = jest.fn();
+
+    vi.useFakeTimers();
+    const fn = vi.fn();
     const App = ({ wait }: { wait?: number }) => {
       const fetchData = useDebounceFn(async () => fn(), wait);
       useEffect(() => {
@@ -157,10 +195,14 @@ describe('utils', () => {
             fetchData.run();
             fetchData.run();
           }}
-        />
+        >
+          test
+        </div>
       );
     };
     const html = render(<App />);
+
+    await html.findByText('test');
 
     expect(fn).toBeCalledTimes(1);
 
@@ -175,13 +217,23 @@ describe('utils', () => {
       html.rerender(<App wait={80} />);
     });
 
+    await act(() => {
+      return vi.runOnlyPendingTimers();
+    });
+
     act(() => {
       html.baseElement.querySelector<HTMLDivElement>('#test')?.click();
     });
 
-    await waitTime(100);
+    await act(() => {
+      return vi.runOnlyPendingTimers();
+    });
 
-    expect(fn).toBeCalledTimes(4);
+    await html.findByText('test');
+
+    await act(() => {
+      expect(fn).toBeCalledTimes(4);
+    });
 
     act(() => {
       html.rerender(<App wait={0} />);
@@ -191,7 +243,9 @@ describe('utils', () => {
       html.baseElement.querySelector<HTMLDivElement>('#test')?.click();
     });
 
-    expect(fn).toBeCalledTimes(6);
+    await act(() => {
+      expect(fn).toBeCalledTimes(6);
+    });
 
     // wait === 100 but callback is cancelled
 
@@ -203,13 +257,15 @@ describe('utils', () => {
       html.baseElement.querySelector<HTMLDivElement>('#test')?.click();
     });
 
-    await waitTime(50);
+    await act(() => {
+      return vi.runOnlyPendingTimers();
+    });
 
     html.unmount();
 
-    await waitTime(100);
+    expect(fn).toBeCalledTimes(7);
 
-    expect(fn).toBeCalledTimes(6);
+    vi.useRealTimers();
   });
 
   it('📅 useDebounceFn execution has errors', async () => {
@@ -219,8 +275,10 @@ describe('utils', () => {
       },
     });
 
+    vi.useFakeTimers();
+
     const error = new Error('debounce error');
-    const catchFn = jest.fn();
+    const catchFn = vi.fn();
     const App = ({ wait }: { wait?: number }) => {
       const fetchData = useDebounceFn(async () => {
         throw error;
@@ -235,9 +293,11 @@ describe('utils', () => {
 
     render(<App />);
 
-    await waitTime(100);
+    await waitFor(() => {
+      expect(catchFn).toHaveBeenCalledWith(error);
+    });
 
-    expect(catchFn).toBeCalledWith(error);
+    vi.useRealTimers();
   });
 
   it('📅 conversionSubmitValue nil', async () => {
@@ -270,10 +330,16 @@ describe('utils', () => {
         time: dayjs('2019-11-16 12:50:26'),
         name: 'qixian',
         money: 20,
-        dateTimeRange: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
+        dateTimeRange: [
+          dayjs('2019-11-16 12:50:26'),
+          dayjs('2019-11-16 12:50:26'),
+        ],
         dateRange: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
         timeRange: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
-        timeRange2: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
+        timeRange2: [
+          dayjs('2019-11-16 12:50:26'),
+          dayjs('2019-11-16 12:50:26'),
+        ],
         dateQuarter: dayjs('2019-11-16 12:50:26'),
       },
       'string',
@@ -290,9 +356,13 @@ describe('utils', () => {
     expect(html.time).toBe('12:50:26');
     expect(html.name).toBe('qixian');
     expect(html.money).toBe(20);
-    expect(html.dateTimeRange.join(',')).toBe('2019-11-16 12:50:26,2019-11-16 12:50:26');
+    expect(html.dateTimeRange.join(',')).toBe(
+      '2019-11-16 12:50:26,2019-11-16 12:50:26',
+    );
     expect(html.dateRange.join(',')).toBe('2019-11-16,2019-11-16');
-    expect(html.timeRange2.join(',')).toBe('2019-11-16 12:50:26,2019-11-16 12:50:26');
+    expect(html.timeRange2.join(',')).toBe(
+      '2019-11-16 12:50:26,2019-11-16 12:50:26',
+    );
     expect(html.dateQuarter).toBe('2019-Q4');
   });
 
@@ -320,10 +390,22 @@ describe('utils', () => {
       {
         date: {
           dataTime: dayjs('2019-11-16 12:50:26'),
-          dateTimeRange: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
-          dateRange: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
-          timeRange: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
-          timeRange2: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
+          dateTimeRange: [
+            dayjs('2019-11-16 12:50:26'),
+            dayjs('2019-11-16 12:50:26'),
+          ],
+          dateRange: [
+            dayjs('2019-11-16 12:50:26'),
+            dayjs('2019-11-16 12:50:26'),
+          ],
+          timeRange: [
+            dayjs('2019-11-16 12:50:26'),
+            dayjs('2019-11-16 12:50:26'),
+          ],
+          timeRange2: [
+            dayjs('2019-11-16 12:50:26'),
+            dayjs('2019-11-16 12:50:26'),
+          ],
         },
       },
       'string',
@@ -338,9 +420,13 @@ describe('utils', () => {
       },
     );
     expect(html.date.dataTime).toBe('2019-11-16 12:50:26');
-    expect(html.date.dateTimeRange.join(',')).toBe('2019-11-16 12:50:26,2019-11-16 12:50:26');
+    expect(html.date.dateTimeRange.join(',')).toBe(
+      '2019-11-16 12:50:26,2019-11-16 12:50:26',
+    );
     expect(html.date.dateRange.join(',')).toBe('2019-11-16,2019-11-16');
-    expect(html.date.timeRange2.join(',')).toBe('2019-11-16 12:50:26,2019-11-16 12:50:26');
+    expect(html.date.timeRange2.join(',')).toBe(
+      '2019-11-16 12:50:26,2019-11-16 12:50:26',
+    );
   });
 
   it('📅 conversionSubmitValue number', async () => {
@@ -350,10 +436,16 @@ describe('utils', () => {
         time: dayjs('2019-11-16 12:50:26'),
         name: 'qixian',
         money: 20,
-        dateTimeRange: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
+        dateTimeRange: [
+          dayjs('2019-11-16 12:50:26'),
+          dayjs('2019-11-16 12:50:26'),
+        ],
         dateRange: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
         timeRange: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
-        timeRange2: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
+        timeRange2: [
+          dayjs('2019-11-16 12:50:26'),
+          dayjs('2019-11-16 12:50:26'),
+        ],
       },
       'number',
       {
@@ -380,10 +472,16 @@ describe('utils', () => {
         time: dayjs('2019-11-16 12:50:26'),
         name: 'qixian',
         money: 20,
-        dateTimeRange: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
+        dateTimeRange: [
+          dayjs('2019-11-16 12:50:26'),
+          dayjs('2019-11-16 12:50:26'),
+        ],
         dateRange: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
         timeRange: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
-        timeRange2: [dayjs('2019-11-16 12:50:26'), dayjs('2019-11-16 12:50:26')],
+        timeRange2: [
+          dayjs('2019-11-16 12:50:26'),
+          dayjs('2019-11-16 12:50:26'),
+        ],
       },
       false,
       {
@@ -411,7 +509,10 @@ describe('utils', () => {
   });
 
   it('📅 parseValueToMoment dayjs', async () => {
-    const html = parseValueToDay(['2019-11-16 12:50:26', '2019-11-16 12:50:26'], 'YYYY-MM-DD');
+    const html = parseValueToDay(
+      ['2019-11-16 12:50:26', '2019-11-16 12:50:26'],
+      'YYYY-MM-DD',
+    );
     expect((html as Dayjs[]).map((item) => item.valueOf()).join(',')).toBe(
       '1573862400000,1573862400000',
     );
@@ -434,10 +535,14 @@ describe('utils', () => {
       </DropdownFooter>,
     );
     act(() => {
-      html.baseElement.querySelector<HTMLDivElement>('.ant-pro-core-dropdown-footer')?.click();
+      html.baseElement
+        .querySelector<HTMLDivElement>('.ant-pro-core-dropdown-footer')
+        ?.click();
     });
     expect(
-      !!html.baseElement.querySelector<HTMLDivElement>('.ant-pro-core-dropdown-footer'),
+      !!html.baseElement.querySelector<HTMLDivElement>(
+        '.ant-pro-core-dropdown-footer',
+      ),
     ).toBeTruthy();
   });
 
@@ -450,6 +555,7 @@ describe('utils', () => {
     };
     const html = render(
       <Form>
+        <span>text</span>
         <InlineErrorFormItem
           errorType="popover"
           rules={[
@@ -478,11 +584,15 @@ describe('utils', () => {
       </Form>,
     );
 
+    await html.findByText('text');
+
     await act(async () => {
       (await html.findByRole('test_input')).focus();
     });
-    await waitForComponentToPaint(html, 100);
-    expect(!!html.baseElement.querySelector('div.ant-popover')).toBeFalsy();
+
+    await waitFor(() => {
+      expect(!!html.baseElement.querySelector('div.ant-popover')).toBeFalsy();
+    });
 
     await act(async () => {
       const dom = await html.findByRole('test_input');
@@ -492,8 +602,10 @@ describe('utils', () => {
         },
       });
     });
-    await waitForComponentToPaint(html, 1000);
-    expect(!!html.baseElement.querySelector('div.ant-popover')).toBeTruthy();
+
+    await waitFor(() => {
+      expect(!!html.baseElement.querySelector('div.ant-popover')).toBeTruthy();
+    });
     const li = html.baseElement.querySelectorAll(
       'div.ant-popover .ant-popover-inner-content div.ant-form-item-explain-error',
     );
@@ -508,7 +620,10 @@ describe('utils', () => {
         },
       });
     });
-    await waitForComponentToPaint(html, 1000);
+
+    await waitFor(() => {
+      return html.findAllByDisplayValue('12345678901AB');
+    });
 
     await act(async () => {
       const dom = await html.findByRole('test_input');
@@ -518,10 +633,12 @@ describe('utils', () => {
         },
       });
     });
-    await waitForComponentToPaint(html, 1000);
-    expect(
-      html.baseElement.querySelectorAll('div.ant-popover.ant-popover-hidden').length > 0,
-    ).toBeFalsy();
+    await waitFor(() => {
+      expect(
+        html.baseElement.querySelectorAll('div.ant-popover.ant-popover-hidden')
+          .length > 0,
+      ).toBeFalsy();
+    });
 
     await act(async () => {
       const dom = await html.findByRole('test_input');
@@ -531,10 +648,12 @@ describe('utils', () => {
         },
       });
     });
-    await waitForComponentToPaint(html, 1000);
-    expect(
-      html.baseElement.querySelectorAll('div.ant-popover.ant-popover-hidden').length > 0,
-    ).toBeFalsy();
+    await waitFor(() => {
+      expect(
+        html.baseElement.querySelectorAll('div.ant-popover.ant-popover-hidden')
+          .length > 0,
+      ).toBeFalsy();
+    });
   });
 
   it('📅 transformKeySubmitValue return string', async () => {
@@ -546,27 +665,53 @@ describe('utils', () => {
         money: 20,
         dateTimeRange: ['2019-11-16 12:50:26', '2019-11-16 12:55:26'],
         dateRange: ['2019-11-16 12:50:26', '2019-11-16 12:55:26'],
+        dateRange2: ['2019-11-16 12:50:26', '2019-11-16 12:55:26'],
       },
       {
-        dataTime: () => 'new-dataTime',
-        time: () => 'new-time',
+        dataTime: (value) => ({ 'new-dataTime': value }),
+        time: (value) => ({ 'new-time': value }),
         name: () => 'new-name',
-        money: () => 'new-money',
+        money: (value) => ({ 'new-money': value }),
+        // @ts-ignore
+        dateRange2: [
+          (itemValue, _, tempValues) => tempValues,
+          () => 'dateRange',
+        ],
       },
     );
     const htmlKeys = Object.keys(html).sort();
     expect(htmlKeys).toEqual(
-      ['new-dataTime', 'new-time', 'new-name', 'new-money', 'dateTimeRange', 'dateRange'].sort(),
+      [
+        'new-dataTime',
+        'new-time',
+        'dateRange2',
+        'name',
+        'new-money',
+        'dateTimeRange',
+        'dateRange',
+      ].sort(),
     );
     expect(htmlKeys).not.toEqual(
-      ['dataTime', 'time', 'name', 'money', 'dateTimeRange', 'dateRange'].sort(),
+      [
+        'dataTime',
+        'time',
+        'new-name',
+        'dateRange2',
+        'money',
+        'dateTimeRange',
+        'dateRange',
+      ].sort(),
     );
     expect((html as any)['new-dataTime']).toBe('2019-11-16 12:50:26');
     expect((html as any)['new-time']).toBe('2019-11-16 12:50:26');
-    expect((html as any)['new-name']).toBe('qixian');
+    expect((html as any).name).toBe('new-name');
     expect((html as any)['new-money']).toBe(20);
-    expect(html.dateTimeRange.join(',')).toBe('2019-11-16 12:50:26,2019-11-16 12:55:26');
-    expect(html.dateRange.join(',')).toBe('2019-11-16 12:50:26,2019-11-16 12:55:26');
+    expect(html.dateTimeRange.join(',')).toBe(
+      '2019-11-16 12:50:26,2019-11-16 12:55:26',
+    );
+    expect(html.dateRange.join(',')).toBe(
+      '2019-11-16 12:50:26,2019-11-16 12:55:26',
+    );
   });
 
   it('📅 transformKeySubmitValue will return file', async () => {
@@ -610,7 +755,7 @@ describe('utils', () => {
       },
     );
     const htmlKeys = Object.keys(html).sort();
-
+    console.log(html);
     expect(htmlKeys).toEqual(
       [
         'dateTimeRange1',
@@ -626,7 +771,14 @@ describe('utils', () => {
     );
 
     expect(htmlKeys).not.toEqual(
-      ['dataTime', 'time', 'name', 'money', 'dateTimeRange', 'dateRange'].sort(),
+      [
+        'dataTime',
+        'time',
+        'name',
+        'money',
+        'dateTimeRange',
+        'dateRange',
+      ].sort(),
     );
     expect(html.dataTime).toBe('2019-11-16 12:50:26');
     expect(html.time).toBe('2019-11-16 12:50:26');
@@ -715,14 +867,25 @@ describe('utils', () => {
     );
     const htmlKeys = Object.keys(html).sort();
     expect(htmlKeys).toEqual(
-      ['dateRange', 'dateTimeRange', 'money', 'name', 'new-dataTime', 'new-time'].sort(),
+      [
+        'dateRange',
+        'dateTimeRange',
+        'money',
+        'name',
+        'new-dataTime',
+        'new-time',
+      ].sort(),
     );
-    expect(html['new-dataTime']).toBe('2019-11-16 12:50:26');
-    expect(html['new-time']).toBe('2019-11-16 12:50:26');
+    expect((html as any)['new-dataTime']).toBe('2019-11-16 12:50:26');
+    expect((html as any)['new-time']).toBe('2019-11-16 12:50:26');
     expect(html.name).toBe('qixian');
     expect(html.money).toBe(20);
-    expect(html.dateTimeRange.join(',')).toBe('2019-11-16 12:50:26,2019-11-16 12:55:26');
-    expect(html.dateRange.join(',')).toBe('2019-11-16 12:50:26,2019-11-16 12:55:26');
+    expect(html.dateTimeRange.join(',')).toBe(
+      '2019-11-16 12:50:26,2019-11-16 12:55:26',
+    );
+    expect(html.dateRange.join(',')).toBe(
+      '2019-11-16 12:50:26,2019-11-16 12:55:26',
+    );
   });
 
   it('📅 transformKeySubmitValue ignore empty transform', async () => {
@@ -755,7 +918,7 @@ describe('utils', () => {
       dataTime: () => ['new-dataTime'],
       time: undefined,
     });
-    expect(html['new-dataTime']).toBe('2019-11-16 12:50:26');
+    expect((html as any)['new-dataTime']).toBe('2019-11-16 12:50:26');
     expect(html.tag).not.toBe(labelInValue);
     expect(React.isValidElement(html.tag.label)).toBeTruthy();
   });
@@ -772,7 +935,7 @@ describe('utils', () => {
       dataTime: () => ['new-dataTime'],
       time: undefined,
     });
-    expect(html['new-dataTime']).toBe('2019-11-16 12:50:26');
+    expect((html as any)['new-dataTime']).toBe('2019-11-16 12:50:26');
     expect(html.file).toBe(file);
     expect(html.files[0]).toBe(file);
   });
@@ -787,7 +950,7 @@ describe('utils', () => {
       dataTime: () => ['new-dataTime'],
       time: undefined,
     });
-    expect(html['new-dataTime']).toBe('2019-11-16 12:50:26');
+    expect((html as any)['new-dataTime']).toBe('2019-11-16 12:50:26');
     expect(html.file).toBe(undefined);
   });
 
@@ -801,12 +964,20 @@ describe('utils', () => {
   });
 
   it('🪓 isUrl', async () => {
-    expect(isUrl('https://procomponents.ant.design/components/layout')).toBe(true);
-    expect(isUrl('https://procomponents.ant.design/en-US/components/layout#basic-usage')).toBe(
+    expect(isUrl('https://procomponents.ant.design/components/layout')).toBe(
       true,
     );
-    expect(isUrl('procomponents.ant.design/en-US/components/layout')).toBe(false);
-    expect(isUrl('https:://procomponents.ant.design/en-US/components/layout')).toBe(false);
+    expect(
+      isUrl(
+        'https://procomponents.ant.design/en-US/components/layout#basic-usage',
+      ),
+    ).toBe(true);
+    expect(isUrl('procomponents.ant.design/en-US/components/layout')).toBe(
+      false,
+    );
+    expect(
+      isUrl('https:://procomponents.ant.design/en-US/components/layout'),
+    ).toBe(false);
   });
 
   it('🪓 isDropdownValueType', async () => {
@@ -841,7 +1012,7 @@ describe('utils', () => {
     expect(html.asFragment()).toMatchSnapshot();
   });
 
-  it('🪓 isDeepEqualReact', () => {
+  it('🪓 isDeepEqualReact', async () => {
     const CustomComponent: React.FC<any> = () => {
       return <div />;
     };
@@ -857,7 +1028,13 @@ describe('utils', () => {
     const DeepComponent = () => {
       const a = (
         <CustomComponent
-          array={[1, 2, 3, 4, { deep: true, nested: { deep: true, ignoreKey: false } }]}
+          array={[
+            1,
+            2,
+            3,
+            4,
+            { deep: true, nested: { deep: true, ignoreKey: false } },
+          ]}
           map={
             new Map([
               ['key', 'value'],
@@ -880,7 +1057,13 @@ describe('utils', () => {
 
       const b = (
         <CustomComponent
-          array={[1, 2, 3, 4, { deep: true, nested: { deep: true, ignoreKey: true } }]}
+          array={[
+            1,
+            2,
+            3,
+            4,
+            { deep: true, nested: { deep: true, ignoreKey: true } },
+          ]}
           map={
             new Map([
               ['key', 'value'],
@@ -901,21 +1084,69 @@ describe('utils', () => {
         />
       );
 
-      expect(isDeepEqualReact(a, b, ['ignoreKey'])).toBeTruthy();
-
-      return <CustomComponent a={a} b={b} />;
+      return (
+        <>
+          <span>{isDeepEqualReact(a, b, ['ignoreKey']) ? 'Equal' : 'No'}</span>
+          <CustomComponent a={a} b={b} />
+        </>
+      );
     };
+    const html = render(<DeepComponent />);
 
-    const wrapper = render(<DeepComponent />);
-
-    waitForComponentToPaint(wrapper, 100);
+    await html.findAllByText('Equal');
   });
 
   it('🪓 nanoid', () => {
-    window.crypto.randomUUID = jest.fn(() => '1234567890abcdef');
+    if (!window.crypto.randomUUID) {
+      window.crypto.randomUUID = () => '1' as any;
+    }
+    const cryptoSpy = vi.spyOn(window.crypto, 'randomUUID');
 
-    const id = nanoid();
+    nanoid();
 
-    expect(id).toBe('1234567890abcdef');
+    expect(cryptoSpy).toBeCalled();
+  });
+
+  it('🪓 stringify', () => {
+    expect(
+      stringify({
+        name: 'kiner',
+        age: 28,
+        liked: false,
+        favs: ['Reading', 'Running'],
+        userInfo: { fullName: 'kinertang' },
+      }),
+    ).toBe(
+      '{"name":"kiner","age":28,"liked":false,"favs":["Reading","Running"],"userInfo":{"fullName":"kinertang"}}',
+    );
+
+    const json: any = {
+      name: 'kiner',
+      age: 28,
+    };
+    json.detail = json;
+    expect(stringify(json)).toBe(
+      '{"name":"kiner","age":28,"detail":"Magic circle!"}',
+    );
+
+    expect(
+      stringify({
+        name: 'kiner',
+        age: BigInt(999),
+      }),
+    ).toBe('{"name":"kiner","age":999}');
+
+    expect(
+      stringify({
+        name: 'kiner',
+        age: BigInt(99999),
+        node: <div>aaaa</div>,
+        fn: function () {
+          console.log(1);
+        },
+      }),
+    ).toBe(
+      '{"name":"kiner","age":99999,"node":{"type":"div","key":null,"ref":null,"props":{"children":"aaaa"},"_owner":null,"_store":{}}}',
+    );
   });
 });

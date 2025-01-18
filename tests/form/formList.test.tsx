@@ -1,24 +1,36 @@
 ﻿import { CloseOutlined, SnippetsOutlined } from '@ant-design/icons';
+import { ProCard } from '@ant-design/pro-components';
 import type { FormListActionType } from '@ant-design/pro-form';
-import { ModalForm, StepsForm } from '@ant-design/pro-form';
 import ProForm, {
+  ModalForm,
   ProFormDatePicker,
   ProFormDependency,
   ProFormGroup,
   ProFormList,
   ProFormText,
+  StepsForm,
 } from '@ant-design/pro-form';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import { Button, Form } from 'antd';
-import type { NamePath } from 'antd/es/form/interface';
-import _ from 'lodash';
-import React from 'react';
-import { waitForComponentToPaint, waitTime } from '../util';
-import { ProCard } from '@ant-design/pro-components';
+import type { NamePath } from 'antd/lib/form/interface';
+import { pick } from 'lodash-es';
+import moment from 'moment';
+import React, { act } from 'react';
+import { waitForWaitTime } from '../util';
+
+afterEach(() => {
+  cleanup();
+});
 
 describe('ProForm List', () => {
   it('⛲ ProForm.List', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     render(
       <ProForm
         onFinish={async (values) => {
@@ -45,8 +57,66 @@ describe('ProForm List', () => {
     fireEvent.click(await screen.findByText('提 交'));
 
     await waitFor(() => {
-      expect(fn).toBeCalledWith(['name', 'nickName']);
+      expect(fn).toHaveBeenCalledWith(['name', 'nickName']);
     });
+  });
+
+  it('⛲ ProForm.List support readonly', async () => {
+    const html = render(
+      <ProForm readonly>
+        <ProFormText name="name" label="姓名" />
+        <ProFormList
+          name="users"
+          label="用户信息"
+          initialValue={[
+            {
+              name: '1111',
+              nickName: '1111',
+            },
+          ]}
+        >
+          <ProFormText name="name" label="姓名" />
+          <ProFormText name="nickName" label="昵称" />
+        </ProFormList>
+      </ProForm>,
+    );
+    await html.findByText('提 交');
+
+    expect(
+      !!html.baseElement.querySelector(
+        'ant-pro-form-list-creator-button-bottom',
+      ),
+    ).toBeFalsy();
+  });
+
+  it('⛲ ProForm.List support self readonly', async () => {
+    const html = render(
+      <ProForm>
+        <ProFormText name="name" label="姓名" />
+        <ProFormList
+          name="users"
+          label="用户信息"
+          initialValue={[
+            {
+              name: '1111',
+              nickName: '1111',
+            },
+          ]}
+          readonly
+        >
+          <ProFormText name="name" label="姓名" />
+          <ProFormText name="nickName" label="昵称" />
+        </ProFormList>
+      </ProForm>,
+    );
+
+    await html.findByText('提 交');
+
+    expect(
+      !!html.baseElement.querySelector(
+        'ant-pro-form-list-creator-button-bottom',
+      ),
+    ).toBeFalsy();
   });
 
   it('⛲ ProForm.List for deps ProFormDependency', async () => {
@@ -84,7 +154,11 @@ describe('ProForm List', () => {
             )}
             initialValue={[{}]}
           >
-            <ModalForm title="添加规则" trigger={<div>点击添加</div>} width={1200}>
+            <ModalForm
+              title="添加规则"
+              trigger={<div>点击添加</div>}
+              width={1200}
+            >
               <ProFormText
                 name="ruleType"
                 width="sm"
@@ -109,7 +183,7 @@ describe('ProForm List', () => {
       button.click();
     });
 
-    await waitForComponentToPaint(100);
+    await waitForWaitTime(200);
 
     const input = await html.findByPlaceholderText('用户信息的名字');
     act(() => {
@@ -126,7 +200,7 @@ describe('ProForm List', () => {
   });
 
   it('⛲ ProForm.List add button', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const { container } = render(
       <ProForm
         onFinish={async (values) => {
@@ -151,22 +225,30 @@ describe('ProForm List', () => {
     );
 
     expect(
-      !!container.querySelectorAll('.ant-btn.ant-pro-form-list-creator-button-bottom').length,
+      !!container.querySelectorAll(
+        '.ant-btn.ant-pro-form-list-creator-button-bottom',
+      ).length,
     ).toBeTruthy();
     expect(
-      container.querySelectorAll('.ant-btn.ant-pro-form-list-creator-button-top').length,
+      container.querySelectorAll(
+        '.ant-btn.ant-pro-form-list-creator-button-top',
+      ).length,
     ).toBeFalsy();
 
-    fireEvent.click(container.querySelector('.ant-btn.ant-pro-form-list-creator-button-bottom')!);
+    fireEvent.click(
+      container.querySelector(
+        '.ant-btn.ant-pro-form-list-creator-button-bottom',
+      )!,
+    );
     fireEvent.click(await screen.findByText('提 交'));
 
     await waitFor(() => {
-      expect(fn).toBeCalledWith([]);
+      expect(fn).toHaveBeenCalledWith([]);
     });
   });
 
   it('⛲ ProForm.List render children', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     render(
       <ProForm
         onFinish={async (values) => {
@@ -199,7 +281,7 @@ describe('ProForm List', () => {
     fireEvent.click(await screen.findByText('提 交'));
 
     await waitFor(() => {
-      expect(fn).toBeCalledWith({
+      expect(fn).toHaveBeenCalledWith({
         name: '1111',
         nickName: '1111',
       });
@@ -207,7 +289,7 @@ describe('ProForm List', () => {
   });
 
   it('⛲ ProForm.List getCurrentRowData and setCurrentRowData', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const html = render(
       <ProForm
         onFinish={async (values) => {
@@ -240,7 +322,7 @@ describe('ProForm List', () => {
                     });
                   }}
                 >
-                  设置此行
+                  设置此项
                 </Button>
                 <Button
                   type="dashed"
@@ -253,7 +335,7 @@ describe('ProForm List', () => {
                     });
                   }}
                 >
-                  清空此行
+                  清空此项
                 </Button>
               </div>
             );
@@ -262,15 +344,17 @@ describe('ProForm List', () => {
       </ProForm>,
     );
 
-    await waitForComponentToPaint(html, 2000);
+    await waitForWaitTime(2000);
 
     act(() => {
-      html.baseElement.querySelector<HTMLDivElement>('.ant-btn.ant-btn-primary')?.click();
+      html.baseElement
+        .querySelector<HTMLDivElement>('.ant-btn.ant-btn-primary')
+        ?.click();
     });
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
 
-    expect(fn).toBeCalledWith({
+    expect(fn).toHaveBeenCalledWith({
       name: '1111',
       nickName: '1111',
     });
@@ -279,15 +363,17 @@ describe('ProForm List', () => {
       html.baseElement.querySelector<HTMLDivElement>('#set')?.click();
     });
 
-    await waitForComponentToPaint(html, 2000);
+    await waitForWaitTime(2000);
 
     act(() => {
-      html.baseElement.querySelector<HTMLDivElement>('.ant-btn.ant-btn-primary')?.click();
+      html.baseElement
+        .querySelector<HTMLDivElement>('.ant-btn.ant-btn-primary')
+        ?.click();
     });
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
 
-    expect(fn).toBeCalledWith({
+    expect(fn).toHaveBeenCalledWith({
       name: 'New Name0',
       nickName: 'New Remark0',
     });
@@ -297,12 +383,14 @@ describe('ProForm List', () => {
     });
 
     act(() => {
-      html.baseElement.querySelector<HTMLDivElement>('.ant-btn.ant-btn-primary')?.click();
+      html.baseElement
+        .querySelector<HTMLDivElement>('.ant-btn.ant-btn-primary')
+        ?.click();
     });
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
 
-    expect(fn).toBeCalledWith({
+    expect(fn).toHaveBeenCalledWith({
       name: undefined,
       nickName: undefined,
     });
@@ -320,12 +408,14 @@ describe('ProForm List', () => {
     );
 
     expect(
-      !!container.querySelectorAll('.ant-btn.ant-pro-form-list-creator-button-bottom').length,
+      !!container.querySelectorAll(
+        '.ant-btn.ant-pro-form-list-creator-button-bottom',
+      ).length,
     ).toBeFalsy();
   });
 
   it('⛲ ProForm.List add button when creatorRecord', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const { container } = render(
       <ProForm
         onFinish={async (values) => {
@@ -353,11 +443,15 @@ describe('ProForm List', () => {
       </ProForm>,
     );
 
-    fireEvent.click(container.querySelector('.ant-btn.ant-pro-form-list-creator-button-bottom')!);
+    fireEvent.click(
+      container.querySelector(
+        '.ant-btn.ant-pro-form-list-creator-button-bottom',
+      )!,
+    );
     fireEvent.click(await screen.findByText('提 交'));
 
     await waitFor(() => {
-      expect(fn).toBeCalledWith({
+      expect(fn).toHaveBeenCalledWith({
         name: '2222',
         nickName: '2222',
       });
@@ -365,7 +459,7 @@ describe('ProForm List', () => {
   });
 
   it('⛲ ProForm.List add button on top', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const { container } = render(
       <ProForm
         onFinish={async (values) => {
@@ -394,22 +488,28 @@ describe('ProForm List', () => {
     );
 
     expect(
-      !!container.querySelectorAll('.ant-btn.ant-pro-form-list-creator-button-top').length,
+      !!container.querySelectorAll(
+        '.ant-btn.ant-pro-form-list-creator-button-top',
+      ).length,
     ).toBeTruthy();
     expect(
-      !!container.querySelectorAll('.ant-btn.ant-pro-form-list-creator-button-bottom').length,
+      !!container.querySelectorAll(
+        '.ant-btn.ant-pro-form-list-creator-button-bottom',
+      ).length,
     ).toBeFalsy();
 
-    fireEvent.click(container.querySelector('.ant-btn.ant-pro-form-list-creator-button-top')!);
+    fireEvent.click(
+      container.querySelector('.ant-btn.ant-pro-form-list-creator-button-top')!,
+    );
     fireEvent.click(await screen.findByText('提 交'));
 
     await waitFor(() => {
-      expect(fn).toBeCalledWith([]);
+      expect(fn).toHaveBeenCalledWith([]);
     });
   });
 
   it('⛲ ProForm.List copy to newline', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const { container } = render(
       <ProForm
         onFinish={async (values) => {
@@ -434,12 +534,14 @@ describe('ProForm List', () => {
     );
 
     fireEvent.click(
-      container.querySelectorAll('.ant-pro-form-list-action .ant-pro-form-list-action-icon')[0],
+      container.querySelectorAll(
+        '.ant-pro-form-list-action .ant-pro-form-list-action-icon',
+      )[0],
     );
     fireEvent.click(await screen.findByText('提 交'));
 
     await waitFor(() => {
-      expect(fn).toBeCalledWith({
+      expect(fn).toHaveBeenCalledWith({
         name: '1111',
         nickName: '1111',
       });
@@ -447,7 +549,7 @@ describe('ProForm List', () => {
   });
 
   it('⛲ ProForm.List delete icon', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const { container } = render(
       <ProForm
         onFinish={async (values) => {
@@ -483,7 +585,7 @@ describe('ProForm List', () => {
     fireEvent.click(await screen.findByText('提 交'));
 
     await waitFor(() => {
-      expect(fn).toBeCalledWith({
+      expect(fn).toHaveBeenCalledWith({
         name: '2222',
         nickName: '2222',
       });
@@ -491,7 +593,7 @@ describe('ProForm List', () => {
   });
 
   it('⛲ ProForm.List itemRender', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     render(
       <ProForm
         onFinish={async (values) => {
@@ -531,7 +633,7 @@ describe('ProForm List', () => {
   });
 
   it('⛲ ProForm.List in ProForm.List', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const { container } = render(
       <ProForm
         onFinish={async (values) => {
@@ -587,12 +689,14 @@ describe('ProForm List', () => {
     );
 
     fireEvent.click(
-      container.querySelectorAll('.ant-pro-form-list .ant-pro-form-list .ant-btn-dashed')[0],
+      container.querySelectorAll(
+        '.ant-pro-form-list .ant-pro-form-list .ant-btn-dashed',
+      )[0],
     );
     fireEvent.click(await screen.findByText('提 交'));
 
     await waitFor(() => {
-      expect(fn).toBeCalledWith([
+      expect(fn).toHaveBeenCalledWith([
         {
           name: '1212',
         },
@@ -604,7 +708,7 @@ describe('ProForm List', () => {
   });
 
   it('⛲ ProForm.List support ProFormDependency', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const { container } = render(
       <ProForm>
         <ProFormText name="name" label="姓名" />
@@ -642,7 +746,7 @@ describe('ProForm List', () => {
     });
 
     expect(container.querySelectorAll('input.ant-input')).toHaveLength(4);
-    expect(fn).toBeCalledWith('222');
+    expect(fn).toHaveBeenCalledWith('222');
   });
 
   it('⛲ ProForm.List support ProFormDependency2', async () => {
@@ -692,7 +796,9 @@ describe('ProForm List', () => {
                       extra="a, b, c.a取自局部"
                     >
                       <pre>
-                        <code className="case3">{JSON.stringify(depValues, null, 2)}</code>
+                        <code className="case3">
+                          {JSON.stringify(depValues, null, 2)}
+                        </code>
                       </pre>
                     </Form.Item>
                   )}
@@ -714,7 +820,9 @@ describe('ProForm List', () => {
                       extra="a, b, c.a取自全局"
                     >
                       <pre>
-                        <code className="case2">{JSON.stringify(depValues, null, 2)}</code>
+                        <code className="case2">
+                          {JSON.stringify(depValues, null, 2)}
+                        </code>
                       </pre>
                     </Form.Item>
                   )}
@@ -724,12 +832,16 @@ describe('ProForm List', () => {
           </ProFormGroup>
         </ProFormGroup>
         <ProFormGroup
-          title={`收集依赖值（情形1) <ProFormDependency name={${JSON.stringify(depName1)}}>`}
+          title={`收集依赖值（情形1) <ProFormDependency name={${JSON.stringify(
+            depName1,
+          )}}>`}
         >
           <ProFormDependency name={depName1}>
             {(depValues) => (
               <pre>
-                <code className="case1">{JSON.stringify(depValues, null, 2)}</code>
+                <code className="case1">
+                  {JSON.stringify(depValues, null, 2)}
+                </code>
               </pre>
             )}
           </ProFormDependency>
@@ -742,10 +854,18 @@ describe('ProForm List', () => {
     };
 
     expect(container.querySelector('code.case1')).toContainHTML(
-      JSON.stringify(_.pick(initialValues, namePaths2PropertyPaths(depName1)), null, 2),
+      JSON.stringify(
+        pick(initialValues, namePaths2PropertyPaths(depName1)),
+        null,
+        2,
+      ),
     );
     expect(container.querySelector('code.case2')).toContainHTML(
-      JSON.stringify(_.pick(initialValues, namePaths2PropertyPaths(depName2)), null, 2),
+      JSON.stringify(
+        pick(initialValues, namePaths2PropertyPaths(depName2)),
+        null,
+        2,
+      ),
     );
     expect(container.querySelector('code.case3')).toContainHTML(
       JSON.stringify(
@@ -787,7 +907,9 @@ describe('ProForm List', () => {
       </ProForm>,
     );
 
-    expect(!!container.querySelectorAll('.ant-pro-form-list-action').length).toBeFalsy();
+    expect(
+      !!container.querySelectorAll('.ant-pro-form-list-action').length,
+    ).toBeFalsy();
   });
 
   it('⛲ ProForm.List support copyIconProps.icon and deleteIconProps.icon', async () => {
@@ -815,13 +937,15 @@ describe('ProForm List', () => {
       </ProForm>,
     );
 
-    expect(!!container.querySelectorAll('.anticon-snippets').length).toBeTruthy();
+    expect(
+      !!container.querySelectorAll('.anticon-snippets').length,
+    ).toBeTruthy();
     expect(!!container.querySelectorAll('.anticon-close').length).toBeTruthy();
   });
 
   it('⛲ ProForm.List use behavior guard when triggering behavior', async () => {
-    const fnAdd = jest.fn();
-    const fnRemove = jest.fn();
+    const fnAdd = vi.fn();
+    const fnRemove = vi.fn();
     const html = render(
       <ProForm>
         <ProFormList
@@ -862,7 +986,7 @@ describe('ProForm List', () => {
       </ProForm>,
     );
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
     expect(html.baseElement.querySelectorAll('input.ant-input').length).toBe(1);
 
     // 新增按钮
@@ -872,46 +996,55 @@ describe('ProForm List', () => {
 
     expect(fnAdd).toHaveBeenLastCalledWith(undefined, 1);
     expect(html.baseElement.querySelectorAll('input.ant-input').length).toBe(1);
-    await waitForComponentToPaint(html, 1200);
+    await waitForWaitTime(1200);
 
     expect(html.baseElement.querySelectorAll('input.ant-input').length).toBe(2);
 
     // 复制按钮
     await act(async () => {
-      html.baseElement.querySelectorAll<HTMLDivElement>('.action-copy')[0]?.click?.();
+      html.baseElement
+        .querySelectorAll<HTMLDivElement>('.action-copy')[0]
+        ?.click?.();
     });
 
     expect(fnAdd).toHaveBeenLastCalledWith('1111', 2);
 
-    await waitForComponentToPaint(html, 1200);
+    await waitForWaitTime(1200);
 
-    const input = html.baseElement.querySelectorAll<HTMLInputElement>('input.ant-input');
+    const input =
+      html.baseElement.querySelectorAll<HTMLInputElement>('input.ant-input');
     expect(input.length).toBe(3);
     expect(input[2].value).toBe('1111');
 
+    expect(html.baseElement).toMatchSnapshot();
+
     // 删除按钮
     await act(async () => {
-      html.baseElement.querySelectorAll<HTMLDivElement>('.action-remove')[2]?.click?.();
+      html.baseElement
+        .querySelectorAll<HTMLDivElement>('.action-remove')[2]
+        ?.click?.();
     });
 
-    expect(fnRemove).toBeCalledWith(2);
+    expect(fnRemove).toHaveBeenCalledWith(2);
     expect(html.baseElement.querySelectorAll('input.ant-input').length).toBe(3);
-    await waitForComponentToPaint(html, 1200);
+    await waitForWaitTime(1200);
 
     expect(html.baseElement.querySelectorAll('input.ant-input').length).toBe(2);
 
     // 删除按钮不能删除的项目
     await act(async () => {
-      html.baseElement.querySelectorAll<HTMLDivElement>('.action-remove')[0]?.click?.();
+      html.baseElement
+        .querySelectorAll<HTMLDivElement>('.action-remove')[0]
+        ?.click?.();
     });
 
-    await waitForComponentToPaint(html, 1200);
-    expect(fnRemove).toBeCalledWith(0);
+    await waitForWaitTime(1200);
+    expect(fnRemove).toHaveBeenCalledWith(0);
     expect(html.baseElement.querySelectorAll('input.ant-input').length).toBe(2);
   });
 
   it('⛲ ProForm.List use behavior guard when triggering no behavior', async () => {
-    const fnAdd = jest.fn();
+    const fnAdd = vi.fn();
     const html = render(
       <ProForm>
         <ProFormList
@@ -946,7 +1079,7 @@ describe('ProForm List', () => {
       </ProForm>,
     );
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
     expect(html.baseElement.querySelectorAll('input.ant-input').length).toBe(1);
 
     // 新增按钮
@@ -958,9 +1091,9 @@ describe('ProForm List', () => {
   });
 
   it('⛲ ProForm.List warning after remove', async () => {
-    const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    const fnRemove = jest.fn();
+    const fnRemove = vi.fn();
     const html = render(
       <ProForm>
         <ProFormList
@@ -983,14 +1116,16 @@ describe('ProForm List', () => {
       </ProForm>,
     );
     await act(async () => {
-      html.baseElement.querySelectorAll<HTMLDivElement>('.action-remove')[0]?.click?.();
+      html.baseElement
+        .querySelectorAll<HTMLDivElement>('.action-remove')[0]
+        ?.click?.();
     });
 
-    await waitForComponentToPaint(html, 100);
-    expect(fnRemove).toBeCalledWith(0);
+    await waitForWaitTime(100);
+    expect(fnRemove).toHaveBeenCalledWith(0);
     expect(html.baseElement.querySelectorAll('input.ant-input').length).toBe(0);
 
-    await waitForComponentToPaint(html, 100);
+    await waitForWaitTime(100);
 
     expect(errorSpy).not.toHaveBeenCalled();
 
@@ -1023,16 +1158,22 @@ describe('ProForm List', () => {
       </ProForm>,
     );
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
     expect(html.baseElement.querySelectorAll('input.ant-input').length).toBe(1);
     // 尝试增加到4条数据
     await act(async () => {
-      html.baseElement.querySelectorAll<HTMLDivElement>('.action-copy')[0]?.click?.();
-      html.baseElement.querySelectorAll<HTMLDivElement>('.action-copy')[0]?.click?.();
-      html.baseElement.querySelectorAll<HTMLDivElement>('.action-copy')[0]?.click?.();
+      html.baseElement
+        .querySelectorAll<HTMLDivElement>('.action-copy')[0]
+        ?.click?.();
+      html.baseElement
+        .querySelectorAll<HTMLDivElement>('.action-copy')[0]
+        ?.click?.();
+      html.baseElement
+        .querySelectorAll<HTMLDivElement>('.action-copy')[0]
+        ?.click?.();
     });
-    await waitTime(1000);
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(1000);
+    await waitForWaitTime(100);
     const createBtn = html.baseElement.querySelectorAll<HTMLDivElement>(
       '.ant-btn.ant-pro-form-list-creator-button-bottom',
     );
@@ -1042,16 +1183,25 @@ describe('ProForm List', () => {
 
     // 尝试删除掉所有，但实际至少保留一个
     await act(async () => {
-      html.baseElement.querySelectorAll<HTMLDivElement>('.action-remove')[0]?.click?.();
-      html.baseElement.querySelectorAll<HTMLDivElement>('.action-remove')[0]?.click?.();
-      html.baseElement.querySelectorAll<HTMLDivElement>('.action-remove')[0]?.click?.();
+      html.baseElement
+        .querySelectorAll<HTMLDivElement>('.action-remove')[0]
+        ?.click?.();
+      html.baseElement
+        .querySelectorAll<HTMLDivElement>('.action-remove')[0]
+        ?.click?.();
+      html.baseElement
+        .querySelectorAll<HTMLDivElement>('.action-remove')[0]
+        ?.click?.();
     });
-    await waitTime(1200);
-    expect(html.baseElement.querySelectorAll<HTMLDivElement>('.action-remove').length).toBe(0);
+    await waitForWaitTime(1200);
+    expect(
+      html.baseElement.querySelectorAll<HTMLDivElement>('.action-remove')
+        .length,
+    ).toBe(0);
   });
 
   it('⛲ valid to set the format property in ProForm.List', async () => {
-    const onFinish = jest.fn();
+    const onFinish = vi.fn();
     const html = render(
       <ProForm
         onFinish={onFinish}
@@ -1081,8 +1231,8 @@ describe('ProForm List', () => {
     act(() => {
       html.queryByText('提 交')?.click();
     });
-    await waitForComponentToPaint(html);
-    expect(onFinish).toBeCalledWith({
+    await waitForWaitTime(100);
+    expect(onFinish).toHaveBeenCalledWith({
       list: [
         {
           date: '2020',
@@ -1092,7 +1242,7 @@ describe('ProForm List', () => {
   });
 
   it('⛲ ProForm.List fieldExtraRender', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     render(
       <ProForm
         onFinish={async (values) => {
@@ -1141,7 +1291,7 @@ describe('ProForm List', () => {
     fireEvent.click(await screen.findByText('提 交')!);
 
     await waitFor(() => {
-      expect(fn).toBeCalledWith({
+      expect(fn).toHaveBeenCalledWith({
         name: '2222',
         nickName: '2222',
       });
@@ -1195,7 +1345,7 @@ describe('ProForm List', () => {
       </ProForm>,
     );
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
 
     await act(async () => {
       const dom = await html.findByText('Add Field');
@@ -1264,7 +1414,7 @@ describe('ProForm List', () => {
       });
     });
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
 
     expect(ref.current?.getCurrentRowData().lv2Name).toBe('test');
   });
@@ -1307,7 +1457,7 @@ describe('ProForm List', () => {
       </ProForm>,
     );
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
 
     expect(ref.current?.getCurrentRowData().name).toBe('1111');
 
@@ -1320,19 +1470,19 @@ describe('ProForm List', () => {
       });
     });
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
 
     expect(ref.current?.getCurrentRowData().name).toBe('test');
 
     ref.current?.setCurrentRowData({ name: 'New Name' });
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
 
     expect(ref.current?.getCurrentRowData().name).toBe('New Name');
   });
   it('⛲ ProForm.List action hooks should be emit', async () => {
-    const handleAdd = jest.fn();
-    const handleRemove = jest.fn();
+    const handleAdd = vi.fn();
+    const handleRemove = vi.fn();
 
     const html = render(
       <ProForm>
@@ -1358,12 +1508,14 @@ describe('ProForm List', () => {
       </ProForm>,
     );
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
     // 删除按钮
     await act(async () => {
-      html.baseElement.querySelectorAll<HTMLDivElement>('.action-remove')[0]?.click?.();
+      html.baseElement
+        .querySelectorAll<HTMLDivElement>('.action-remove')[0]
+        ?.click?.();
     });
-    expect(handleRemove).toBeCalledWith(0);
+    expect(handleRemove).toHaveBeenCalledWith(0);
 
     // 新增按钮
     await act(async () => {
@@ -1374,7 +1526,7 @@ describe('ProForm List', () => {
         fireEvent.click(createBtn);
       }
     });
-    expect(handleAdd).toBeCalledWith(1);
+    expect(handleAdd).toHaveBeenCalledWith(1);
   });
 
   it(`⛲ ProForm.List display * when required`, () => {
@@ -1400,7 +1552,9 @@ describe('ProForm List', () => {
       </ProForm>,
     );
 
-    expect(html.baseElement.querySelectorAll('.ant-form-item-required').length).toBe(1);
+    expect(
+      html.baseElement.querySelectorAll('.ant-form-item-required').length,
+    ).toBe(1);
 
     html.rerender(
       <ProForm>
@@ -1410,42 +1564,169 @@ describe('ProForm List', () => {
       </ProForm>,
     );
 
-    expect(html.baseElement.querySelectorAll('.ant-form-item-required').length).toBe(0);
+    expect(
+      html.baseElement.querySelectorAll('.ant-form-item-required').length,
+    ).toBe(0);
     html.unmount();
   });
 
   it(`⛲ ProForm.List support validate formList empty`, async () => {
-    const onFinish = jest.fn();
+    const onFinish = vi.fn();
     const html = render(
       <ProForm>
         <ProFormList name="list" label="表格" isValidateList>
-          <ProFormText name="name" rules={[{ required: true, message: '请填写1' }]} />
+          <ProFormText
+            name="name"
+            rules={[{ required: true, message: '请填写1' }]}
+          />
         </ProFormList>
       </ProForm>,
     );
-    await waitForComponentToPaint(html, 300);
+    await waitForWaitTime(300);
 
     await act(async () => {
       fireEvent.click(await html.findByText('提 交'));
     });
-    await waitForComponentToPaint(html, 300);
+    await waitForWaitTime(300);
     expect(onFinish).toBeCalledTimes(0);
     expect((await html.findAllByText('列表不能为空')).length).toBe(1);
     await act(async () => {
       fireEvent.click(await html.findByText('添加一行数据'));
     });
-    await waitForComponentToPaint(html, 300);
+    await waitForWaitTime(300);
     await act(async () => {
       fireEvent.click(await html.findByText('提 交'));
     });
-    await waitForComponentToPaint(html, 300);
-    expect((await html.baseElement.querySelector('.ant-form-item-explain-error'))?.innerHTML).toBe(
-      '请填写1',
-    );
+    await waitForWaitTime(300);
+    expect(
+      (await html.baseElement.querySelector('.ant-form-item-explain-error'))
+        ?.innerHTML,
+    ).toBe('请填写1');
     await act(async () => {
       fireEvent.click(await html.baseElement.querySelector('.action-remove')!);
     });
-    await waitForComponentToPaint(html, 300);
+    await waitForWaitTime(300);
     expect((await html.findAllByText('列表不能为空')).length).toBe(1);
+  });
+
+  it('⛲  ProForm.List transform should be call', async () => {
+    const handleFinish1 = vi.fn();
+    const handleFinish2 = vi.fn();
+    const handleFinish3 = vi.fn();
+    const handleFinish4 = vi.fn();
+    const handleFinish5 = vi.fn();
+    const html = render(
+      <ProForm
+        onFinish={async (values) => {
+          handleFinish1(values.datas[0].date);
+          handleFinish2(values.datas[0].datas[0].date);
+          handleFinish3(values.datas[0].datas[0].datas[0].date);
+          handleFinish4(values.datas[0].datas[0].datas[0].datas[0].date);
+          handleFinish5(values);
+        }}
+      >
+        <ProFormList
+          name="datas"
+          initialValue={[
+            {
+              date: '2022-10-12 10:00:00',
+              datas: [
+                {
+                  date: '2022-10-12 10:00:00',
+                  datas: [
+                    {
+                      date: '2022-10-12 10:00:00',
+                      datas: [
+                        {
+                          date: '2022-10-12 10:00:00',
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ]}
+        >
+          {() => {
+            return (
+              <div>
+                <ProFormDatePicker
+                  name="date"
+                  transform={(value) => {
+                    return {
+                      date: moment(value).unix(),
+                    };
+                  }}
+                />
+                <ProFormList name="datas">
+                  {() => {
+                    return (
+                      <div>
+                        <ProFormDatePicker
+                          name="date"
+                          transform={(value) => {
+                            return {
+                              date: moment(value).unix(),
+                            };
+                          }}
+                        />
+
+                        <ProFormList name="datas">
+                          {() => {
+                            return (
+                              <div>
+                                <ProFormDatePicker
+                                  name="date"
+                                  transform={(value) => {
+                                    return {
+                                      date: moment(value).unix(),
+                                    };
+                                  }}
+                                />
+
+                                <ProFormList name="datas">
+                                  {() => {
+                                    return (
+                                      <div>
+                                        <ProFormDatePicker
+                                          name="date"
+                                          transform={(value) => {
+                                            return {
+                                              date: moment(value).unix(),
+                                            };
+                                          }}
+                                        />
+                                      </div>
+                                    );
+                                  }}
+                                </ProFormList>
+                              </div>
+                            );
+                          }}
+                        </ProFormList>
+                      </div>
+                    );
+                  }}
+                </ProFormList>
+              </div>
+            );
+          }}
+        </ProFormList>
+      </ProForm>,
+    );
+
+    await waitForWaitTime(2000);
+    act(() => {
+      html.baseElement
+        .querySelector<HTMLDivElement>('.ant-btn.ant-btn-primary')
+        ?.click();
+    });
+    await waitForWaitTime(2000);
+
+    expect(handleFinish1).toHaveBeenCalledWith(1665568800);
+    expect(handleFinish2).toHaveBeenCalledWith(1665568800);
+    expect(handleFinish3).toHaveBeenCalledWith(1665568800);
+    expect(handleFinish4).toHaveBeenCalledWith(1665568800);
   });
 });

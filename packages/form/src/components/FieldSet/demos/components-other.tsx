@@ -1,6 +1,8 @@
 import {
   ProForm,
+  ProFormCascader,
   ProFormCheckbox,
+  ProFormColorPicker,
   ProFormDigit,
   ProFormDigitRange,
   ProFormGroup,
@@ -163,8 +165,53 @@ const Demo = () => {
             }}
             placeholder="Please select favorite colors"
             rules={[
-              { required: true, message: 'Please select your favorite colors!', type: 'array' },
+              {
+                required: true,
+                message: 'Please select your favorite colors!',
+                type: 'array',
+              },
             ]}
+          />
+          <ProFormCascader
+            label="地址"
+            request={async () => [
+              {
+                value: 'zhejiang',
+                label: '浙江',
+                children: [
+                  {
+                    value: 'hangzhou',
+                    label: '杭州',
+                    children: [
+                      {
+                        value: 'xihu',
+                        label: '西湖',
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                value: 'jiangsu',
+                label: 'Jiangsu',
+                children: [
+                  {
+                    value: 'nanjing',
+                    label: 'Nanjing',
+                    children: [
+                      {
+                        value: 'zhonghuamen',
+                        label: 'Zhong Hua Men',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ]}
+            fieldProps={{
+              changeOnSelect: true,
+            }}
+            name="area"
           />
 
           <ProFormRadio.Group
@@ -228,15 +275,23 @@ const Demo = () => {
             label="Checkbox.Group"
             options={['A', 'B', 'C', 'D', 'E', 'F']}
           />
+          <ProFormColorPicker label="颜色选择" name="color" />
         </ProFormGroup>
         <ProFormGroup label="数字类">
           <ProFormDigitRange
             label="InputNumberRange"
             name="input-number-range"
             separator="-"
+            placeholder={['最小值', '最大值']}
             separatorWidth={60}
           />
-          <ProFormDigit label="InputNumber" name="input-number" width="sm" min={1} max={10} />
+          <ProFormDigit
+            label="InputNumber"
+            name="input-number"
+            width="sm"
+            min={1}
+            max={10}
+          />
           <ProFormSwitch name="switch" label="Switch" />
           <ProFormSlider
             name="slider"

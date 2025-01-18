@@ -1,10 +1,14 @@
 import ProForm, { ProFormText } from '@ant-design/pro-form';
+import { cleanup, fireEvent, render } from '@testing-library/react';
 import { Input } from 'antd';
-import { fireEvent, render } from '@testing-library/react';
+
+afterEach(() => {
+  cleanup();
+});
 
 describe('ProForm.Item', () => {
   it('📦 ProForm support fieldProps.onBlur', async () => {
-    const onBlur = jest.fn();
+    const onBlur = vi.fn();
     const { container } = render(
       <ProForm
         initialValues={{
@@ -24,13 +28,13 @@ describe('ProForm.Item', () => {
     fireEvent.focus(container.querySelector('input#navTheme')!);
     fireEvent.blur(container.querySelector('input#navTheme')!);
 
-    expect(onBlur).toBeCalledWith('dark');
+    expect(onBlur).toHaveBeenCalledWith('dark');
     expect(onBlur).toBeCalledTimes(1);
   });
 
   it('📦 ProForm.Item supports onChange', async () => {
-    const onChange = jest.fn();
-    const onValuesChange = jest.fn();
+    const onChange = vi.fn();
+    const onValuesChange = vi.fn();
     const { container } = render(
       <ProForm
         initialValues={{
@@ -50,9 +54,9 @@ describe('ProForm.Item', () => {
       },
     });
 
-    expect(onChange).toBeCalledWith('1212');
+    expect(onChange).toHaveBeenCalledWith('1212');
     expect(onChange).toBeCalledTimes(1);
-    expect(onValuesChange).toBeCalledWith('1212');
+    expect(onValuesChange).toHaveBeenCalledWith('1212');
     expect(onValuesChange).toBeCalledTimes(1);
   });
 });

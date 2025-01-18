@@ -1,14 +1,14 @@
+import { useIntl } from '@ant-design/pro-provider';
 import { InputNumber } from 'antd';
 import React from 'react';
 import type { ProFieldFC } from '../../index';
 // 兼容代码-----------
-import 'antd/es/input-number/style';
-import { useIntl } from '@ant-design/pro-provider';
+import 'antd/lib/input-number/style';
 //------------
 
 export type FieldDigitProps = {
   text: number;
-  placeholder?: any;
+  placeholder?: string;
 };
 
 /**
@@ -18,11 +18,17 @@ export type FieldDigitProps = {
  * @returns {string}
  */
 export function formatSecond(result: number) {
+  let newResult = result;
   let formatText = '';
-  const d = Math.floor(result / (3600 * 24));
-  const h = Math.floor(result / 3600);
-  const m = Math.floor((result / 60) % 60);
-  const s = Math.floor(result % 60);
+  let past = false;
+  if (newResult < 0) {
+    newResult = -newResult;
+    past = true;
+  }
+  const d = Math.floor(newResult / (3600 * 24));
+  const h = Math.floor((newResult / 3600) % 24);
+  const m = Math.floor((newResult / 60) % 60);
+  const s = Math.floor(newResult % 60);
   formatText = `${s}秒`;
   if (m > 0) {
     formatText = `${m}分钟${formatText}`;
@@ -32,6 +38,9 @@ export function formatSecond(result: number) {
   }
   if (d > 0) {
     formatText = `${d}天${formatText}`;
+  }
+  if (past) {
+    formatText += '前';
   }
   return formatText;
 }
@@ -46,7 +55,8 @@ const Second: ProFieldFC<FieldDigitProps> = (
   ref,
 ) => {
   const intl = useIntl();
-  const placeholderValue = placeholder || intl.getMessage('tableForm.inputPlaceholder', '请输入');
+  const placeholderValue =
+    placeholder || intl.getMessage('tableForm.inputPlaceholder', '请输入');
   if (type === 'read') {
     const secondText = formatSecond(Number(text) as number);
     const dom = <span ref={ref}>{secondText}</span>;
