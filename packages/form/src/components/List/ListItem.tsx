@@ -1,13 +1,24 @@
-﻿import { CopyOutlined, DeleteOutlined } from '@ant-design/icons';
+﻿import {
+  CopyOutlined,
+  DeleteOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons';
 import { ProProvider } from '@ant-design/pro-provider';
+import { SearchTransformKeyFn } from '@ant-design/pro-utils';
 import type { ButtonProps, FormInstance } from 'antd';
-import { Spin, Tooltip } from 'antd';
-import type { FormListFieldData, FormListOperation, FormListProps } from 'antd/es/form/FormList';
+import { ConfigProvider, Tooltip } from 'antd';
+import type {
+  FormListFieldData,
+  FormListOperation,
+  FormListProps,
+} from 'antd/lib/form/FormList';
+import classNames from 'classnames';
 import toArray from 'rc-util/lib/Children/toArray';
 import set from 'rc-util/lib/utils/set';
 import type { CSSProperties, ReactNode } from 'react';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { FormListContext } from '.';
+import { EditOrReadOnlyContext } from '../../BaseForm/EditOrReadOnlyContext';
 import { useGridHelpers } from '../../helpers';
 
 export type ChildrenItemFunction = (
@@ -104,6 +115,21 @@ export type FormListActionGuard = {
 
 export type ProFromListCommonProps = {
   /**
+   * @name 提交时转化值，一般用于将值转化为提交的数据
+   * @param value 字段的值
+   * @param namePath 字段的name
+   * @param allValues 所有的字段
+   * @returns 字段新的值，如果返回对象，会和所有值 merge 一次
+   *
+   * @example {name:[a,b] => {name:a,b }    transform: (value,namePath,allValues)=> value.join(",")
+   * @example {name: string => { newName:string }    transform: (value,namePath,allValues)=> { newName:value }
+   * @example {name:dayjs} => {name:string transform: (value,namePath,allValues)=> value.format("YYYY-MM-DD")
+   * @example {name:dayjs}=> {name:时间戳} transform: (value,namePath,allValues)=> value.valueOf()
+   * @example {name:{value,label}} => { name:string} transform: (value,namePath,allValues)=> value.value
+   * @example {name:{value,label}} => { valueName,labelName  } transform: (value,namePath,allValues)=> { valueName:value.value, labelName:value.name }
+   */
+  transform?: SearchTransformKeyFn;
+  /**
    * @name 自定义新增按钮的配置
    * @example 设置按钮到顶部
    * creatorButtonProps={{position:"top"}}
@@ -165,7 +191,7 @@ export type ProFromListCommonProps = {
     action: FormListOperation,
     /**
      * 默认的操作dom
-     * [删除，复制，新增]
+     * [复制，删除]
      */
     defaultActionDom: ReactNode[],
     /**
@@ -179,7 +205,10 @@ export type ProFromListCommonProps = {
    * @example 全部包再一个卡片里面
    * itemContainerRender: (doms,listMeta) => <Card title={listMeta.field.name}>{doms}</Card>
    */
-  itemContainerRender?: (doms: ReactNode, listMeta: FormListListListMete) => ReactNode;
+  itemContainerRender?: (
+    doms: ReactNode,
+    listMeta: FormListListListMete,
+  ) => ReactNode;
   /**
    * @name 自定义Item，可以用来将 action 放到别的地方
    *
@@ -241,11 +270,18 @@ export type ProFormListItemProps = ProFromListCommonProps & {
   /**
    * 数据新增成功回调
    */
-  onAfterAdd?: (...params: [...Parameters<FormListOperation['add']>, number]) => void;
+  onAfterAdd?: (
+    ...params: [...Parameters<FormListOperation['add']>, number]
+  ) => void;
   /**
    * 数据移除成功回调
    */
-  onAfterRemove?: (...params: [...Parameters<FormListOperation['remove']>, number]) => void;
+  onAfterRemove?: (
+    ...params: [...Parameters<FormListOperation['remove']>, number]
+  ) => void;
+
+  /** 是否只读模式 */
+  readonly: boolean;
 };
 
 const ProFormListItem: React.FC<
@@ -281,9 +317,13 @@ const ProFormListItem: React.FC<
     ...rest
   } = props;
   const { hashId } = useContext(ProProvider);
+  const { componentSize } = ConfigProvider.useConfig?.() || {
+    componentSize: 'middle',
+  };
   const listContext = useContext(FormListContext);
-
   const unmountedRef = useRef(false);
+
+  const { mode } = useContext(EditOrReadOnlyContext);
 
   const [loadingRemove, setLoadingRemove] = useState(false);
   const [loadingCopy, setLoadingCopy] = useState(false);
@@ -341,14 +381,20 @@ const ProFormListItem: React.FC<
       return childrenItem;
     });
   const copyIcon = useMemo(() => {
+    if (mode === 'read') return null;
     /** 复制按钮的配置 */
     if (copyIconProps === false || max === count) return null;
     const { Icon = CopyOutlined, tooltipText } = copyIconProps as IconConfig;
     return (
       <Tooltip title={tooltipText} key="copy">
-        <Spin spinning={loadingCopy}>
+        {loadingCopy ? (
+          <LoadingOutlined />
+        ) : (
           <Icon
-            className={`${prefixCls}-action-icon action-copy ${hashId}`}
+            className={classNames(
+              `${prefixCls}-action-icon action-copy`,
+              hashId,
+            )}
             onClick={async () => {
               setLoadingCopy(true);
               const row = formInstance?.getFieldValue(
@@ -360,7 +406,7 @@ const ProFormListItem: React.FC<
               setLoadingCopy(false);
             }}
           />
-        </Spin>
+        )}
       </Tooltip>
     );
   }, [
@@ -378,13 +424,19 @@ const ProFormListItem: React.FC<
   ]);
 
   const deleteIcon = useMemo(() => {
+    if (mode === 'read') return null;
     if (deleteIconProps === false || min === count) return null;
     const { Icon = DeleteOutlined, tooltipText } = deleteIconProps!;
     return (
       <Tooltip title={tooltipText} key="delete">
-        <Spin spinning={loadingRemove}>
+        {loadingRemove ? (
+          <LoadingOutlined />
+        ) : (
           <Icon
-            className={`${prefixCls}-action-icon action-remove ${hashId}`}
+            className={classNames(
+              `${prefixCls}-action-icon action-remove`,
+              hashId,
+            )}
             onClick={async () => {
               setLoadingRemove(true);
               await action.remove(field.name);
@@ -393,27 +445,54 @@ const ProFormListItem: React.FC<
               }
             }}
           />
-        </Spin>
+        )}
       </Tooltip>
     );
-  }, [deleteIconProps, min, count, loadingRemove, prefixCls, hashId, action, field.name]);
+  }, [
+    deleteIconProps,
+    min,
+    count,
+    loadingRemove,
+    prefixCls,
+    hashId,
+    action,
+    field.name,
+  ]);
 
   const defaultActionDom: React.ReactNode[] = useMemo(
-    () => [copyIcon, deleteIcon].filter((item) => item !== null && item !== undefined),
+    () =>
+      [copyIcon, deleteIcon].filter(
+        (item) => item !== null && item !== undefined,
+      ),
     [copyIcon, deleteIcon],
   );
 
-  const actions = actionRender?.(field, action, defaultActionDom, count) || defaultActionDom;
+  const actions =
+    actionRender?.(field, action, defaultActionDom, count) || defaultActionDom;
 
   const dom =
-    actions.length > 0 ? <div className={`${prefixCls}-action ${hashId}`}>{actions}</div> : null;
+    actions.length > 0 && mode !== 'read' ? (
+      <div
+        className={classNames(
+          `${prefixCls}-action`,
+          {
+            [`${prefixCls}-action-small`]: componentSize === 'small',
+          },
+          hashId,
+        )}
+      >
+        {actions}
+      </div>
+    ) : null;
 
   const options = {
     name: rest.name,
     field,
     index,
     record: formInstance?.getFieldValue?.(
-      [listContext.listName, originName, field.name].filter((item) => item !== undefined).flat(1),
+      [listContext.listName, originName, field.name]
+        .filter((item) => item !== undefined)
+        .flat(1),
     ),
     fields,
     operation: action,
@@ -422,13 +501,18 @@ const ProFormListItem: React.FC<
 
   const { grid } = useGridHelpers();
 
-  const itemContainer = itemContainerRender?.(childrenArray, options) || childrenArray;
+  const itemContainer =
+    itemContainerRender?.(childrenArray, options) || childrenArray;
 
   const contentDom = itemRender?.(
     {
       listDom: (
         <div
-          className={`${prefixCls}-container ${containerClassName} ${hashId}`}
+          className={classNames(
+            `${prefixCls}-container`,
+            containerClassName,
+            hashId,
+          )}
           style={{
             width: grid ? '100%' : undefined,
             ...containerStyle,
@@ -442,16 +526,21 @@ const ProFormListItem: React.FC<
     options,
   ) || (
     <div
-      className={`${prefixCls}-item ${hashId} 
-      ${alwaysShowItemLabel === undefined && `${prefixCls}-item-default`}
-      ${alwaysShowItemLabel ? `${prefixCls}-item-show-label` : ''}`}
+      className={classNames(`${prefixCls}-item`, hashId, {
+        [`${prefixCls}-item-default`]: alwaysShowItemLabel === undefined,
+        [`${prefixCls}-item-show-label`]: alwaysShowItemLabel,
+      })}
       style={{
         display: 'flex',
         alignItems: 'flex-end',
       }}
     >
       <div
-        className={`${prefixCls}-container ${containerClassName} ${hashId}`}
+        className={classNames(
+          `${prefixCls}-container`,
+          containerClassName,
+          hashId,
+        )}
         style={{
           width: grid ? '100%' : undefined,
           ...containerStyle,

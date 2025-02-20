@@ -1,11 +1,17 @@
 import type { RequestOptionsType } from '@ant-design/pro-utils';
+import { nanoid } from '@ant-design/pro-utils';
 import type { SelectProps } from 'antd';
 import { ConfigProvider, Select } from 'antd';
-import type { LabeledValue } from 'antd/es/select';
-import classNames from 'classnames';
-import React, { useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-const { Option, OptGroup } = Select;
+import type { DefaultOptionType, LabeledValue } from 'antd/lib/select';
+import classNames from 'classnames';
+import React, {
+  useContext,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 
 // 支持 key, value, label，兼容 UserSearch 中只填写了 key 的情况。
 export type KeyLabel = Partial<LabeledValue> & RequestOptionsType;
@@ -48,7 +54,7 @@ export interface SearchSelectProps<T = Record<string, any>>
    *
    * @default 请输入关键字搜索
    */
-  placeholder?: any;
+  placeholder?: string;
   /**
    * 是否在输入框聚焦时触发搜索
    *
@@ -69,7 +75,7 @@ export interface SearchSelectProps<T = Record<string, any>>
   prefixCls?: string;
 
   /** 刷新数据 */
-  fetchData: (keyWord: string) => void;
+  fetchData: (keyWord?: string) => void;
 
   /** 清空数据 */
   resetData: () => void;
@@ -80,6 +86,16 @@ export interface SearchSelectProps<T = Record<string, any>>
    * @default true
    */
   fetchDataOnSearch?: boolean;
+
+  /** 默认搜索关键词 */
+  defaultSearchValue?: string;
+
+  /**
+   * 在选择时保留选项的原始标签文本
+   * 当设置为 true 时，选中后回填的内容将使用选项的原始 label，而不是经过 optionItemRender 处理后的内容
+   * @default false
+   */
+  preserveOriginalLabel?: boolean;
 }
 
 const SearchSelect = <T,>(props: SearchSelectProps<T[]>, ref: any) => {
@@ -105,6 +121,8 @@ const SearchSelect = <T,>(props: SearchSelectProps<T[]>, ref: any) => {
     searchValue: propsSearchValue,
     showSearch,
     fieldNames,
+    defaultSearchValue,
+    preserveOriginalLabel = false,
     ...restProps
   } = props;
 
@@ -114,7 +132,9 @@ const SearchSelect = <T,>(props: SearchSelectProps<T[]>, ref: any) => {
     options: optionsPropsName = 'options',
   } = fieldNames || {};
 
-  const [searchValue, setSearchValue] = useState(propsSearchValue);
+  const [searchValue, setSearchValue] = useState(
+    propsSearchValue ?? defaultSearchValue,
+  );
 
   const selectRef = useRef<any>();
 
@@ -141,26 +161,31 @@ const SearchSelect = <T,>(props: SearchSelectProps<T[]>, ref: any) => {
   });
 
   const getMergeValue: SelectProps<any>['onChange'] = (value, option) => {
-    if (Array.isArray(value) && value.length > 0) {
+    if (Array.isArray(value) && Array.isArray(option) && value.length > 0) {
       // 多选情况且用户有选择
       return value.map((item, index) => {
-        const optionItem = option?.[index];
+        const optionItem = (option as DefaultOptionType[])?.[
+          index
+        ] as DefaultOptionType;
         const dataItem = optionItem?.['data-item'] || {};
         return {
           ...dataItem,
           ...item,
+          label: preserveOriginalLabel ? dataItem.label : item.label,
         };
       });
     }
     return [];
   };
 
-  const renderOptions = (mapOptions: RequestOptionsType[]) => {
-    return mapOptions.map((item) => {
+  const genOptions = (
+    mapOptions: RequestOptionsType[],
+  ): DefaultOptionType[] => {
+    return mapOptions.map((item, index) => {
       const {
-        disabled: itemDisable,
         className: itemClassName,
         optionType,
+        ...resetItem
       } = item as RequestOptionsType;
 
       const label = item[labelPropsName];
@@ -168,26 +193,26 @@ const SearchSelect = <T,>(props: SearchSelectProps<T[]>, ref: any) => {
       const itemOptions = item[optionsPropsName] ?? [];
 
       if (optionType === 'optGroup' || item.options) {
-        return (
-          <OptGroup key={value} label={label}>
-            {renderOptions(itemOptions)}
-          </OptGroup>
-        );
+        return {
+          label: label,
+          ...resetItem,
+          data_title: label,
+          title: label,
+          key: value ?? `${label?.toString()}-${index}-${nanoid()}`, // 防止因key相同导致虚拟滚动出问题
+          children: genOptions(itemOptions),
+        } as DefaultOptionType;
       }
 
-      return (
-        <Option
-          {...item}
-          value={value!}
-          key={value || label?.toString()}
-          disabled={itemDisable}
-          data-item={item}
-          className={`${prefixCls}-option ${itemClassName || ''}`}
-          label={label}
-        >
-          {optionItemRender?.(item as any) || label}
-        </Option>
-      );
+      return {
+        title: label,
+        ...resetItem,
+        data_title: label,
+        value: value ?? index,
+        key: value ?? `${label?.toString()}-${index}-${nanoid()}`,
+        'data-item': item,
+        className: `${prefixCls}-option ${itemClassName || ''}`.trim(),
+        label: optionItemRender?.(item as any) || label,
+      } as DefaultOptionType;
     });
   };
   return (
@@ -204,12 +229,41 @@ const SearchSelect = <T,>(props: SearchSelectProps<T[]>, ref: any) => {
       optionLabelProp={optionLabelProp}
       onClear={() => {
         onClear?.();
-        fetchData('');
+        fetchData(undefined);
         if (showSearch) {
           setSearchValue(undefined);
         }
       }}
       {...restProps}
+      filterOption={
+        restProps.filterOption == false
+          ? false
+          : (inputValue, option) => {
+              if (
+                restProps.filterOption &&
+                typeof restProps.filterOption === 'function'
+              ) {
+                return restProps.filterOption(inputValue, {
+                  ...option,
+                  label: option?.data_title,
+                });
+              }
+              return !!(
+                option?.data_title
+                  ?.toString()
+                  .toLowerCase()
+                  .includes(inputValue.toLowerCase()) ||
+                option?.label
+                  ?.toString()
+                  .toLowerCase()
+                  .includes(inputValue.toLowerCase()) ||
+                option?.value
+                  ?.toString()
+                  .toLowerCase()
+                  .includes(inputValue.toLowerCase())
+              );
+            }
+      } // 这里使用pro-components的过滤逻辑
       onSearch={
         showSearch
           ? (value) => {
@@ -224,7 +278,7 @@ const SearchSelect = <T,>(props: SearchSelectProps<T[]>, ref: any) => {
       onChange={(value, optionList, ...rest) => {
         // 将搜索框置空 和 antd 行为保持一致
         if (showSearch && autoClearSearchValue) {
-          fetchData('');
+          fetchData(undefined);
           onSearch?.('');
           setSearchValue(undefined);
         }
@@ -234,14 +288,31 @@ const SearchSelect = <T,>(props: SearchSelectProps<T[]>, ref: any) => {
           return;
         }
 
-        if (mode !== 'multiple') {
+        if (mode !== 'multiple' && !Array.isArray(optionList)) {
           // 单选情况且用户选择了选项
           const dataItem = optionList && optionList['data-item'];
           // 如果value值为空则是清空时产生的回调,直接传值就可以了
           if (!value || !dataItem) {
-            onChange?.(value, optionList, ...rest);
+            const changedValue = value
+              ? {
+                  ...value,
+                  // 这里有一种情况，如果用户使用了 request和labelInValue，保存之后，刷新页面，正常回显，但是再次添加会出现 label 丢失的情况。所以需要兼容
+                  label: preserveOriginalLabel
+                    ? dataItem?.label || value.label
+                    : value.label,
+                }
+              : value;
+            onChange?.(changedValue, optionList, ...rest);
           } else {
-            onChange?.({ ...value, ...dataItem }, optionList, ...rest);
+            onChange?.(
+              {
+                ...value,
+                ...dataItem,
+                label: preserveOriginalLabel ? dataItem.label : value.label,
+              },
+              optionList,
+              ...rest,
+            );
           }
           return;
         }
@@ -254,13 +325,12 @@ const SearchSelect = <T,>(props: SearchSelectProps<T[]>, ref: any) => {
       }}
       onFocus={(e) => {
         if (searchOnFocus) {
-          fetchData('');
+          fetchData(searchValue);
         }
         onFocus?.(e);
       }}
-    >
-      {renderOptions(options || [])}
-    </Select>
+      options={genOptions(options || [])}
+    />
   );
 };
 

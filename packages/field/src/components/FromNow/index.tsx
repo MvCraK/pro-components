@@ -1,12 +1,12 @@
 import { useIntl } from '@ant-design/pro-provider';
-import { parseValueToDay } from '@ant-design/pro-utils';
+import { compatibleBorder, parseValueToDay } from '@ant-design/pro-utils';
 import { DatePicker, Tooltip } from 'antd';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import type { ProFieldFC } from '../../index';
 
 // 兼容代码-----------
-import 'antd/es/date-picker/style';
+import 'antd/lib/date-picker/style';
 import React from 'react';
 //----------------------
 
@@ -19,12 +19,19 @@ dayjs.extend(relativeTime);
 const FieldFromNow: ProFieldFC<{
   text: string;
   format?: string;
-}> = ({ text, mode, render, renderFormItem, format, fieldProps }, ref) => {
+}> = (
+  { text, mode, plain, render, renderFormItem, format, fieldProps },
+  ref,
+) => {
   const intl = useIntl();
 
   if (mode === 'read') {
     const dom = (
-      <Tooltip title={dayjs(text).format(fieldProps?.format || format || 'YYYY-MM-DD HH:mm:ss')}>
+      <Tooltip
+        title={dayjs(text).format(
+          fieldProps?.format || format || 'YYYY-MM-DD HH:mm:ss',
+        )}
+      >
         {dayjs(text).fromNow()}
       </Tooltip>
     );
@@ -34,13 +41,17 @@ const FieldFromNow: ProFieldFC<{
     return <>{dom}</>;
   }
   if (mode === 'edit' || mode === 'update') {
-    const placeholder = intl.getMessage('tableForm.selectPlaceholder', '请选择');
+    const placeholder = intl.getMessage(
+      'tableForm.selectPlaceholder',
+      '请选择',
+    );
     const momentValue = parseValueToDay(fieldProps.value) as dayjs.Dayjs;
     const dom = (
       <DatePicker
         ref={ref}
         placeholder={placeholder}
         showTime
+        {...compatibleBorder(plain === undefined ? true : !plain)}
         {...fieldProps}
         value={momentValue}
       />

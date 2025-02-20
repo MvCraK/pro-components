@@ -4,14 +4,18 @@
   ProFormText,
   ProFormTextArea,
 } from '@ant-design/pro-form';
-import { Input } from 'antd';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { Input } from 'antd';
+
+afterEach(() => {
+  cleanup();
+});
 
 describe('ProFormFieldSet', () => {
   it('😊 ProFormFieldSet onChange', async () => {
-    const fn = jest.fn();
-    const valueFn = jest.fn();
+    const fn = vi.fn();
+    const valueFn = vi.fn();
     const { container, unmount } = render(
       <ProForm
         onFinish={(values) => fn(values.list)}
@@ -43,7 +47,7 @@ describe('ProFormFieldSet', () => {
       },
     });
 
-    expect(valueFn).toBeCalledWith(['111']);
+    expect(valueFn).toHaveBeenCalledWith(['111']);
     expect(valueFn).toBeCalledTimes(1);
 
     fireEvent.change(container.querySelector('#filedSet3')!, {
@@ -52,21 +56,21 @@ describe('ProFormFieldSet', () => {
       },
     });
 
-    expect(valueFn).toBeCalledWith(['111', undefined, '333']);
+    expect(valueFn).toHaveBeenCalledWith(['111', undefined, '333']);
 
     await userEvent.click(container.querySelectorAll('li > div')[1]);
 
-    expect(valueFn).toBeCalledWith(['111', 2, '333']);
+    expect(valueFn).toHaveBeenCalledWith(['111', 2, '333']);
 
     await userEvent.click(await screen.findByText('提 交'));
 
-    expect(fn).toBeCalledWith(['111', 2, '333']);
+    expect(fn).toHaveBeenCalledWith(['111', 2, '333']);
     unmount();
   });
 
   it('😊 ProFormFieldSet support Input onChange', async () => {
-    const fn = jest.fn();
-    const valueFn = jest.fn();
+    const fn = vi.fn();
+    const valueFn = vi.fn();
     const { container, unmount } = render(
       <ProForm
         onFinish={(values) => fn(values.list)}
@@ -91,7 +95,7 @@ describe('ProFormFieldSet', () => {
       },
     });
 
-    expect(valueFn).toBeCalledWith(['111']);
+    expect(valueFn).toHaveBeenCalledWith(['111']);
     expect(valueFn).toBeCalledTimes(1);
 
     fireEvent.change(container.querySelector('#filedSet3')!, {
@@ -100,21 +104,21 @@ describe('ProFormFieldSet', () => {
       },
     });
 
-    expect(valueFn).toBeCalledWith(['111', undefined, '333']);
+    expect(valueFn).toHaveBeenCalledWith(['111', undefined, '333']);
 
     await userEvent.click(container.querySelectorAll('li > div')[1]);
 
-    expect(valueFn).toBeCalledWith(['111', 2, '333']);
+    expect(valueFn).toHaveBeenCalledWith(['111', 2, '333']);
 
     await userEvent.click(await screen.findByText('提 交'));
 
-    expect(fn).toBeCalledWith(['111', 2, '333']);
+    expect(fn).toHaveBeenCalledWith(['111', 2, '333']);
     unmount();
   });
 
   it('😊 ProFormFieldSet transform', async () => {
-    const fn = jest.fn();
-    const valueFn = jest.fn();
+    const fn = vi.fn();
+    const valueFn = vi.fn();
     const { container, unmount } = render(
       <ProForm
         onFinish={async (values) => {
@@ -155,7 +159,7 @@ describe('ProFormFieldSet', () => {
       },
     });
 
-    expect(valueFn).toBeCalledWith(['111']);
+    expect(valueFn).toHaveBeenCalledWith(['111']);
 
     fireEvent.change(container.querySelector('#filedSet2')!, {
       target: {
@@ -163,17 +167,17 @@ describe('ProFormFieldSet', () => {
       },
     });
 
-    expect(valueFn).toBeCalledWith(['111', '222']);
+    expect(valueFn).toHaveBeenCalledWith(['111', '222']);
 
     await userEvent.click(await screen.findByText('提 交'));
 
-    expect(fn).toBeCalledWith('111');
+    expect(fn).toHaveBeenCalledWith('111');
     unmount();
   });
 
   it('😊 ProFormFieldSet convertValue', async () => {
-    const fn = jest.fn();
-    const valueFn = jest.fn();
+    const fn = vi.fn();
+    const valueFn = vi.fn();
     const { container, unmount } = render(
       <ProForm
         onFinish={async (values) => {
@@ -223,7 +227,7 @@ describe('ProFormFieldSet', () => {
 
     await userEvent.click(await screen.findByText('提 交'));
 
-    expect(fn).toBeCalledWith('2');
+    expect(fn).toHaveBeenCalledWith('2');
     unmount();
   });
 });

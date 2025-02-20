@@ -9,12 +9,13 @@
   ProFormSelect,
   ProFormText,
 } from '@ant-design/pro-components';
+import { ConfigProvider } from 'antd';
 import { useState } from 'react';
 
 const Demo = () => {
   const [position, setPosition] = useState<'bottom' | 'top'>('bottom');
   return (
-    <>
+    <ConfigProvider componentSize="small">
       <ProFormRadio.Group
         fieldProps={{
           value: position,
@@ -37,8 +38,18 @@ const Demo = () => {
         }}
       >
         <ProFormText width="sm" name="id" label="主合同编号" />
-        <ProFormText name="project" width="md" label="项目名称" initialValue="xxxx项目" />
-        <ProFormText width="xs" name="mangerName" label="商务经理" initialValue="启途" />
+        <ProFormText
+          name="project"
+          width="md"
+          label="项目名称"
+          initialValue="xxxx项目"
+        />
+        <ProFormText
+          width="xs"
+          name="mangerName"
+          label="商务经理"
+          initialValue="启途"
+        />
         <ProFormList
           name="users"
           label="用户信息"
@@ -109,7 +120,7 @@ const Demo = () => {
           </ProFormGroup>
         </ProFormList>
       </ProForm>
-    </>
+    </ConfigProvider>
   );
 };
 

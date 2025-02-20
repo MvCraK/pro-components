@@ -1,6 +1,15 @@
-import { GithubFilled, InfoCircleFilled, QuestionCircleFilled } from '@ant-design/icons';
+import {
+  GithubFilled,
+  InfoCircleFilled,
+  QuestionCircleFilled,
+} from '@ant-design/icons';
 import type { ProSettings } from '@ant-design/pro-components';
-import { PageContainer, ProLayout, SettingDrawer, ProCard } from '@ant-design/pro-components';
+import {
+  PageContainer,
+  ProCard,
+  ProLayout,
+  SettingDrawer,
+} from '@ant-design/pro-components';
 import { Avatar, Image, Space } from 'antd';
 import { useState } from 'react';
 import defaultProps from './_defaultProps';
@@ -90,12 +99,10 @@ export default () => {
             </div>,
           ];
         }}
-        menuRender={(props, defaultDom) => (
-          <>
-            {console.log('defaultDom', defaultDom)}
-            {defaultDom}
-          </>
-        )}
+        menuRender={(props, defaultDom) => {
+          console.log('defaultDom', defaultDom);
+          return defaultDom;
+        }}
         menuItemRender={(item, dom) => (
           <div
             onClick={() => {

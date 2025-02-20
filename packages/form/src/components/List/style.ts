@@ -45,7 +45,16 @@ const genProStyle: GenerateStyle<ProToken> = (token) => {
           },
         },
       },
-      '&-action': { display: 'flex', height: '32px', marginBlockEnd: '24px', lineHeight: '32px' },
+      '&-action': {
+        display: 'flex',
+        height: token.controlHeight,
+        marginBlockEnd: token.marginLG,
+        lineHeight: token.controlHeight + 'px',
+        '&-small': {
+          height: token.controlHeightSM,
+          lineHeight: token.controlHeightSM,
+        },
+      },
       '&-action-icon': {
         marginInlineStart: 8,
         cursor: 'pointer',

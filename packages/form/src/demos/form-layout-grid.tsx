@@ -9,8 +9,8 @@ import {
   ProFormText,
   ProFormTextArea,
 } from '@ant-design/pro-components';
-import { Col, message, Row, Space } from 'antd';
-import type { FormLayout } from 'antd/es/form/Form';
+import { Col, Row, Space, message } from 'antd';
+import type { FormLayout } from 'antd/lib/form/Form';
 import { useState } from 'react';
 
 const LAYOUT_TYPE_HORIZONTAL = 'horizontal';
@@ -24,7 +24,9 @@ const waitTime = (time: number = 100) => {
 };
 
 export default () => {
-  const [formLayoutType, setFormLayoutType] = useState<FormLayout>(LAYOUT_TYPE_HORIZONTAL);
+  const [formLayoutType, setFormLayoutType] = useState<FormLayout>(
+    LAYOUT_TYPE_HORIZONTAL,
+  );
 
   const [grid, setGrid] = useState(true);
 
@@ -55,19 +57,19 @@ export default () => {
       onFinish={async (values) => {
         await waitTime(2000);
         console.log(values);
-        message.success('提交成功');
+        message.success('Submission successful');
       }}
       params={{}}
       request={async () => {
         await waitTime(100);
         return {
-          name: '蚂蚁设计有限公司',
+          name: 'Ant Design Co., Ltd.',
           useMode: 'chapter',
         };
       }}
     >
       <ProFormRadio.Group
-        label="标签布局"
+        label="Label Layout"
         radioType="button"
         fieldProps={{
           value: formLayoutType,
@@ -86,24 +88,41 @@ export default () => {
           onChange: setGrid,
         }}
         initialValue={true}
-        label="grid开关"
+        label="Grid Switch"
         name="grid"
       />
-      <ProFormText name="name" label="标题" tooltip="最长为 24 位" placeholder="请输入名称" />
-      <ProFormText colProps={{ md: 12, xl: 8 }} name="company" label="姓名" />
-      <ProFormDigit colProps={{ md: 12, xl: 8 }} name="phone" label="电话" />
-      <ProFormText colProps={{ md: 12, xl: 8 }} name="email" label="邮箱" />
-      <ProFormTextArea colProps={{ span: 24 }} name="address" label="详细的工作地址或家庭住址" />
-      <ProFormDatePicker colProps={{ xl: 8, md: 12 }} label="入职日期" name="date" />
-      <ProFormDateRangePicker colProps={{ xl: 8, md: 12 }} label="工作周期" name="dateRange" />
+      <ProFormText
+        name="name"
+        label="Title"
+        tooltip="Up to 24 characters"
+        placeholder="Please enter a name"
+      />
+      <ProFormText colProps={{ md: 12, xl: 8 }} name="company" label="Name" />
+      <ProFormDigit colProps={{ md: 12, xl: 8 }} name="phone" label="Phone" />
+      <ProFormText colProps={{ md: 12, xl: 8 }} name="email" label="Email" />
+      <ProFormTextArea
+        colProps={{ span: 24 }}
+        name="address"
+        label="Detailed Work Address or Home Address"
+      />
+      <ProFormDatePicker
+        colProps={{ xl: 8, md: 12 }}
+        label="Entry Date"
+        name="date"
+      />
+      <ProFormDateRangePicker
+        colProps={{ xl: 8, md: 12 }}
+        label="Work Period"
+        name="dateRange"
+      />
       <ProFormSelect
         colProps={{ xl: 8, md: 12 }}
-        label="职位"
+        label="Position"
         name="level"
         valueEnum={{
-          1: 'front end',
-          2: 'back end',
-          3: 'full stack',
+          1: 'Front End',
+          2: 'Back End',
+          3: 'Full Stack',
         }}
       />
     </ProForm>

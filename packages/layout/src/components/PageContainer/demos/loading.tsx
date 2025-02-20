@@ -4,16 +4,22 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 export default () => {
   const customLoadingDom = useMemo(
-    () => <div style={{ color: 'red', padding: '30px', textAlign: 'center' }}>自定义加载...</div>,
+    () => (
+      <div style={{ color: 'red', padding: '30px', textAlign: 'center' }}>
+        Custom loading...
+      </div>
+    ),
     [],
   );
-  const [customLoading, setCustomLoading] = useState<React.ReactNode | boolean>(customLoadingDom);
+  const [customLoading, setCustomLoading] = useState<React.ReactNode | boolean>(
+    customLoadingDom,
+  );
 
   useEffect(() => {
+    if (process.env.NODE_ENV?.toLocaleLowerCase() === 'test') {
+      return;
+    }
     setTimeout(() => {
-      if (process.env.NODE_ENV?.toLocaleLowerCase() === 'test') {
-        return;
-      }
       setCustomLoading(false);
     }, 3000);
   }, []);
@@ -35,20 +41,20 @@ export default () => {
           ghost
           loading
           header={{
-            title: '默认loading',
+            title: 'Default loading',
             breadcrumb: {
-              routes: [
+              items: [
                 {
                   path: '',
-                  breadcrumbName: '一级页面',
+                  title: 'Primary page',
                 },
                 {
                   path: '',
-                  breadcrumbName: '二级页面',
+                  title: 'Secondary page',
                 },
                 {
                   path: '',
-                  breadcrumbName: '当前页面',
+                  title: 'Current page',
                 },
               ],
             },
@@ -59,7 +65,7 @@ export default () => {
               height: '100vh',
             }}
           >
-            加载中这里不显示
+            If in loading state, this content will not be displayed
           </div>
         </PageContainer>
       </Card>
@@ -69,23 +75,23 @@ export default () => {
           loading={{
             spinning: true,
             className: 'customClassName',
-            tip: '拼命加载中...',
+            tip: 'Loading relentlessly...',
           }}
           header={{
-            title: '自定义loading属性',
+            title: 'Custom loading property',
             breadcrumb: {
-              routes: [
+              items: [
                 {
                   path: '',
-                  breadcrumbName: '一级页面',
+                  title: 'Primary page',
                 },
                 {
                   path: '',
-                  breadcrumbName: '二级页面',
+                  title: 'Secondary page',
                 },
                 {
                   path: '',
-                  breadcrumbName: '当前页面',
+                  title: 'Current page',
                 },
               ],
             },
@@ -96,7 +102,7 @@ export default () => {
               height: '100vh',
             }}
           >
-            加载中这里不显示
+            If in loading state, this content will not be displayed
           </div>
         </PageContainer>
       </Card>
@@ -105,20 +111,20 @@ export default () => {
           ghost
           loading={customLoading}
           header={{
-            title: '自定义loading，3s后显示内容',
+            title: 'Custom loading, display content after 3 seconds',
             breadcrumb: {
-              routes: [
+              items: [
                 {
                   path: '',
-                  breadcrumbName: '一级页面',
+                  title: 'Primary page',
                 },
                 {
                   path: '',
-                  breadcrumbName: '二级页面',
+                  title: 'Secondary page',
                 },
                 {
                   path: '',
-                  breadcrumbName: '当前页面',
+                  title: 'Current page',
                 },
               ],
             },
@@ -129,7 +135,7 @@ export default () => {
               height: '100vh',
             }}
           >
-            加载中这里不显示
+            If in loading state, this content will not be displayed
           </div>
         </PageContainer>
       </Card>

@@ -1,7 +1,7 @@
 import { ProTable } from '@ant-design/pro-components';
-import { render } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
-import { waitForComponentToPaint } from '../util';
+import { cleanup, render } from '@testing-library/react';
+import { act } from 'react';
+import { waitForWaitTime } from '../util';
 
 const valueEnum = {
   0: 'close',
@@ -30,14 +30,21 @@ for (let i = 0; i < 5; i += 1) {
     name: 'AppName',
     containers: Math.floor(Math.random() * 20),
     creator: creators[Math.floor(Math.random() * creators.length)],
-    status: valueEnum[Math.floor(Math.random() * 10) % 2],
+    status: valueEnum[((Math.floor(Math.random() * 10) % 2) + '') as '0'],
     createdAt: Date.now() - Math.floor(Math.random() * 2000),
     money: Math.floor(Math.random() * 2000) * i,
     progress: Math.ceil(Math.random() * 100) + 1,
-    memo: i % 2 === 1 ? '很长很长很长很长很长很长很长的文字要展示但是要留下尾巴' : '简短备注文案',
+    memo:
+      i % 2 === 1
+        ? '很长很长很长很长很长很长很长的文字要展示但是要留下尾巴'
+        : '简短备注文案',
     statusText: '这是一段很随意的文字',
   });
 }
+
+afterEach(() => {
+  cleanup();
+});
 
 describe('Dynamic Persistence', () => {
   it('🎏 columnSetting columnsState.persistenceKey change', async () => {
@@ -78,15 +85,17 @@ describe('Dynamic Persistence', () => {
       />,
     );
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
 
     act(() => {
       html.baseElement
-        .querySelector<HTMLDivElement>('.ant-pro-table-list-toolbar-setting-item .anticon-setting')
+        .querySelector<HTMLDivElement>(
+          '.ant-pro-table-list-toolbar-setting-item .anticon-setting',
+        )
         ?.click();
     });
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
 
     expect(window.sessionStorage.getItem('table_dynamic_status_close')).toMatch(
       '{"index":{"show":true},"statusText":{"show":true}}',
@@ -100,7 +109,7 @@ describe('Dynamic Persistence', () => {
         ?.click();
     });
 
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
 
     expect(window.sessionStorage.getItem('table_dynamic_status_close')).toMatch(
       '{"index":{"show":true},"statusText":{"show":false}}',
@@ -144,10 +153,10 @@ describe('Dynamic Persistence', () => {
         />,
       );
     });
-    await waitForComponentToPaint(html);
+    await waitForWaitTime(100);
 
-    expect(window.sessionStorage.getItem('table_dynamic_status_running')).toMatch(
-      '{"index":{"show":true},"statusText":{"show":true}}',
-    );
+    expect(
+      window.sessionStorage.getItem('table_dynamic_status_running'),
+    ).toMatch('{"index":{"show":true},"statusText":{"show":true}}');
   });
 });

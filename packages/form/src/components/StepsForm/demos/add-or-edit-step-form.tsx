@@ -1,4 +1,4 @@
-// 主要处理新建和编辑的场景
+// Mainly handles the scenarios of creating and editing
 
 import type { ProFormInstance } from '@ant-design/pro-components';
 import {
@@ -41,18 +41,20 @@ const waitTime = (time: number = 100) => {
 const jobType = [
   {
     value: 1,
-    label: '国企',
+    label: 'State-owned enterprise',
   },
   {
     value: 2,
-    label: '私企',
+    label: 'Private enterprise',
   },
 ];
 const EditExample = () => {
-  const formMapRef = useRef<React.MutableRefObject<ProFormInstance<any> | undefined>[]>([]);
+  const formMapRef = useRef<
+    React.MutableRefObject<ProFormInstance<any> | undefined>[]
+  >([]);
   useEffect(() => {
     waitTime(1000).then(() => {
-      // 编辑场景下需要使用formMapRef循环设置formData
+      // In the editing scenario, you need to use formMapRef to loop through and set formData
       formMapRef?.current?.forEach((formInstanceRef) => {
         formInstanceRef?.current?.setFieldsValue(formValue);
       });
@@ -67,13 +69,20 @@ const EditExample = () => {
         return Promise.resolve(true);
       }}
     >
-      <StepsForm.StepForm name="step1" title="工作信息">
-        <ProFormText label="姓名" name={['jobInfo', 'name']} />
-        <ProFormSelect label="工作类型" name={['jobInfo', 'type']} options={jobType} />
+      <StepsForm.StepForm name="step1" title="Job Information">
+        <ProFormText label="Name" name={['jobInfo', 'name']} />
+        <ProFormSelect
+          label="Job Type"
+          name={['jobInfo', 'type']}
+          options={jobType}
+        />
       </StepsForm.StepForm>
-      <StepsForm.StepForm name="step2" title={'同步表单信息'}>
-        <ProFormDateRangePicker label="时间区间" name={['syncTableInfo', 'timeRange']} />
-        <ProFormText label="标题" name={['syncTableInfo', 'title']} />
+      <StepsForm.StepForm name="step2" title={'Sync Table Information'}>
+        <ProFormDateRangePicker
+          label="Time Range"
+          name={['syncTableInfo', 'timeRange']}
+        />
+        <ProFormText label="Title" name={['syncTableInfo', 'title']} />
       </StepsForm.StepForm>
     </StepsForm>
   );

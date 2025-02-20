@@ -2,13 +2,20 @@ export { default as ProFormCaptcha } from './Captcha';
 export type { CaptFieldRef, ProFormCaptchaProps } from './Captcha';
 export { default as ProFormCascader } from './Cascader';
 export { default as ProFormCheckbox } from './Checkbox';
-export type { ProFormCheckboxGroupProps } from './Checkbox';
+export type {
+  ProFormCheckboxGroupProps,
+  ProFormCheckboxProps,
+} from './Checkbox';
 export { default as ProFormColorPicker } from './ColorPicker';
 export type { ProFormColorPickerProps } from './ColorPicker';
+export { default as ProFormDateMonthRangePicker } from './DateMonthRangePicker';
 export { default as ProFormDatePicker } from './DatePicker';
+export { default as ProFormDateQuarterRangePicker } from './DateQuarterRangePicker';
 export { default as ProFormDateRangePicker } from './DateRangePicker';
 export { default as ProFormDateTimePicker } from './DateTimePicker';
 export { default as ProFormDateTimeRangePicker } from './DateTimeRangePicker';
+export { default as ProFormDateWeekRangePicker } from './DateWeekRangePicker';
+export { default as ProFormDateYearRangePicker } from './DateYearRangePicker';
 export { default as ProFormDependency } from './Dependency';
 export type { ProFormDependencyProps } from './Dependency';
 export { default as ProFormDigit } from './Digit';
@@ -19,8 +26,17 @@ export { default as ProFormField } from './Field';
 export type { ProFormFieldProps } from './Field';
 export { default as ProFormFieldSet } from './FieldSet';
 export type { ProFormFieldSetProps } from './FieldSet';
-export { default as ProFormItem, FormItemProvide } from './FormItem';
+export { FormItemProvide, default as ProFormItem } from './FormItem';
 export type { ProFormItemProps } from './FormItem';
+export {
+  FormControlRender,
+  FormItemRender,
+  ProFormItemRender,
+  pickControlProps,
+  pickControlPropsWithId,
+  useControlModel,
+} from './FormItemRender';
+export type { FormControlFC, WithControlPropsType } from './FormItemRender';
 export { default as Group } from './Group';
 export { ProFormList } from './List';
 export type { FormListActionType, ProFormListProps } from './List';
@@ -44,6 +60,7 @@ export { default as ProFormText } from './Text';
 export { default as ProFormTextArea } from './TextArea';
 export { default as ProFormTimePicker } from './TimePicker';
 export { default as ProFormTreeSelect } from './TreeSelect';
+export type { ProFormTreeSelectProps } from './TreeSelect';
 export { default as ProFormUploadButton } from './UploadButton';
 export type { ProFormUploadButtonProps } from './UploadButton';
 export { default as ProFormUploadDragger } from './UploadDragger';

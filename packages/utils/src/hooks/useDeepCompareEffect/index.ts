@@ -6,7 +6,7 @@ import { useDebounceFn } from '../useDebounceFn';
 export const isDeepEqual = (a: any, b: any, ignoreKeys?: string[]) =>
   isDeepEqualReact(a, b, ignoreKeys);
 
-function useDeepCompareMemoize(value: any, ignoreKeys?: string[]) {
+export function useDeepCompareMemoize(value: any, ignoreKeys?: any) {
   const ref = useRef();
   // it can be done by using useMemo as well
   // but useRef is rather cleaner and easier
@@ -35,8 +35,11 @@ export function useDeepCompareEffectDebounce(
   const effectDn = useDebounceFn(async () => {
     effect();
   }, waitTime || 16);
-  useEffect(() => {
-    effectDn.run();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, useDeepCompareMemoize(dependencies || [], ignoreKeys));
+  useEffect(
+    () => {
+      effectDn.run();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    useDeepCompareMemoize(dependencies || [], ignoreKeys),
+  );
 }
