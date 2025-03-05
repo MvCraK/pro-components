@@ -1,12 +1,17 @@
 ﻿import { ModalForm, ProFormText } from '@ant-design/pro-form';
-import { act, fireEvent, render } from '@testing-library/react';
+import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
+import type { FormInstance } from 'antd';
 import { Button } from 'antd';
-import React from 'react';
-import { waitForComponentToPaint, waitTime } from '../util';
+import React, { act, createRef } from 'react';
+import { waitForWaitTime } from '../util';
+
+afterEach(() => {
+  cleanup();
+});
 
 describe('ModalForm', () => {
   it('📦 trigger will simulate onOpenChange', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = render(
       <ModalForm
         width={600}
@@ -16,17 +21,44 @@ describe('ModalForm', () => {
         <ProFormText name="name" />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
     await act(async () => {
       (await wrapper.findByText('新 建'))?.click();
     });
-    await waitForComponentToPaint(wrapper);
-    expect(fn).toBeCalledWith(true);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
+    expect(fn).toHaveBeenCalledWith(true);
+  });
+
+  it('📦 ModelForm get formRef when use request', async () => {
+    const formRef = createRef<FormInstance>();
+    const wrapper = render(
+      <ModalForm
+        open
+        formRef={formRef}
+        request={async (params) => {
+          return params;
+        }}
+        params={{
+          name: 'test',
+        }}
+      >
+        <ProFormText label="名称" name="name" />
+      </ModalForm>,
+    );
+
+    await wrapper.findAllByText('名称');
+
+    expect(formRef.current?.getFieldValue('name')).toBe('test');
+    wrapper.unmount();
   });
 
   it('📦 submitter config no reset default config', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = render(
       <ModalForm
         width={600}
@@ -48,23 +80,27 @@ describe('ModalForm', () => {
         <ProFormText name="name" />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
     await act(async () => {
       (await wrapper.findByText('新 建'))?.click();
     });
-    await waitForComponentToPaint(wrapper, 200);
-    expect(fn).toBeCalledWith(true);
+    await waitForWaitTime(200);
+    expect(fn).toHaveBeenCalledWith(true);
 
     await act(async () => {
       (await wrapper.findByText('取 消'))?.click();
     });
-    await waitForComponentToPaint(wrapper);
-    expect(fn).toBeCalledWith(false);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
+    expect(fn).toHaveBeenCalledWith(false);
   });
 
   it('📦 ModalForm first no render items', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = render(
       <ModalForm
         width={600}
@@ -82,19 +118,23 @@ describe('ModalForm', () => {
         />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
     expect(await wrapper.queryByDisplayValue('1234')).toBeFalsy();
 
     await act(async () => {
       (await wrapper.findByText('新 建'))?.click();
     });
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
     expect(await wrapper.findByDisplayValue('1234')).toBeTruthy();
   });
 
   it('📦 ModalForm first render items', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = render(
       <ModalForm
         width={600}
@@ -115,13 +155,13 @@ describe('ModalForm', () => {
         />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper, 120);
+    await waitForWaitTime(120);
 
     expect(await wrapper.findByDisplayValue('1234')).toBeTruthy();
   });
 
   it('📦 ModalForm destroyOnClose', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = render(
       <ModalForm
         width={600}
@@ -139,7 +179,9 @@ describe('ModalForm', () => {
         />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
     expect(await wrapper.queryByDisplayValue('1234')).toBeFalsy();
 
@@ -163,7 +205,9 @@ describe('ModalForm', () => {
         </ModalForm>,
       );
     });
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
     expect(await wrapper.findByDisplayValue('1234')).toBeTruthy();
 
@@ -188,31 +232,41 @@ describe('ModalForm', () => {
         </ModalForm>,
       );
     });
-    await waitForComponentToPaint(wrapper, 2000);
+    await waitForWaitTime(2000);
 
     expect(await wrapper.queryByDisplayValue('1234')).toBeFalsy();
   });
 
   it('📦 modal close button will simulate onOpenChange', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = render(
-      <ModalForm visible trigger={<Button id="new">新建</Button>} onOpenChange={(open) => fn(open)}>
+      <ModalForm
+        visible
+        trigger={<Button id="new">新建</Button>}
+        onOpenChange={(open) => fn(open)}
+      >
         <ProFormText name="name" />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
     act(() => {
-      wrapper.baseElement.querySelector<HTMLDivElement>('button.ant-modal-close')?.click();
+      wrapper.baseElement
+        .querySelector<HTMLDivElement>('button.ant-modal-close')
+        ?.click();
     });
-    await waitForComponentToPaint(wrapper);
-    expect(fn).toBeCalledWith(false);
-    expect(fn).toBeCalledTimes(2);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
+    expect(fn).toHaveBeenCalledWith(false);
+    expect(fn).toBeCalledTimes(2); // 点击触发一次，关闭触发一次 onOpenChange
   });
 
   it('📦 modal open=true simulate onOpenChange', async () => {
-    const fn = jest.fn();
-    const wrapper = render(
+    const fn = vi.fn();
+    render(
       <ModalForm
         open
         trigger={<Button id="new">新建</Button>}
@@ -221,28 +275,35 @@ describe('ModalForm', () => {
         <ProFormText name="name" />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper);
 
-    expect(fn).toBeCalledWith(true);
+    await waitFor(() => {
+      expect(fn).toHaveBeenCalledWith(true);
+    });
   });
 
   it('📦 reset button will simulate onOpenChange', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = render(
-      <ModalForm visible trigger={<Button id="new">新建</Button>} onOpenChange={(open) => fn(open)}>
+      <ModalForm
+        visible
+        trigger={<Button id="new">新建</Button>}
+        onOpenChange={(open) => fn(open)}
+      >
         <ProFormText name="name" />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
     await act(async () => {
       (await wrapper.findByText('取 消'))?.click();
     });
-    expect(fn).toBeCalledWith(false);
+    expect(fn).toHaveBeenCalledWith(false);
   });
 
   it('📦 modal close button will simulate modalProps.onCancel', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = render(
       <ModalForm
         visible
@@ -255,17 +316,23 @@ describe('ModalForm', () => {
         <ProFormText name="name" />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
     act(() => {
-      wrapper.baseElement.querySelector<HTMLDivElement>('button.ant-modal-close')?.click();
+      wrapper.baseElement
+        .querySelector<HTMLDivElement>('button.ant-modal-close')
+        ?.click();
     });
-    await waitForComponentToPaint(wrapper);
-    expect(fn).toBeCalledWith(false);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
+    expect(fn).toHaveBeenCalledWith(false);
   });
 
   it('📦 form onFinish return true should close modal', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = render(
       <ModalForm
         visible
@@ -276,48 +343,63 @@ describe('ModalForm', () => {
         <ProFormText name="name" />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper, 500);
+    await waitForWaitTime(500);
 
     await act(async () => {
       (await wrapper.findByText('确 认'))?.click();
     });
 
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
-    expect(fn).toBeCalledWith(false);
+    expect(fn).toHaveBeenCalledWith(false);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
   });
 
   it('📦 form onFinish is null, no close modal', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = render(
-      <ModalForm visible trigger={<Button id="new">新建</Button>} onOpenChange={(open) => fn(open)}>
+      <ModalForm
+        visible
+        trigger={<Button id="new">新建</Button>}
+        onOpenChange={(open) => fn(open)}
+      >
         <ProFormText name="name" />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper, 500);
+    await waitForWaitTime(500);
 
     await act(async () => {
       (await wrapper.findByText('确 认'))?.click();
     });
 
-    await waitForComponentToPaint(wrapper);
-    expect(fn).toBeCalledTimes(1);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
+    expect(fn).toBeCalledTimes(1); // 点击会触发一次onOpenChange
   });
 
   it('📦 ModalForm support submitter is false', async () => {
     const wrapper = render(
-      <ModalForm visible trigger={<Button id="new">新建</Button>} submitter={false}>
+      <ModalForm
+        visible
+        trigger={<Button id="new">新建</Button>}
+        submitter={false}
+      >
         <ProFormText name="name" />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper);
 
     await act(async () => {
       (await wrapper.findByText('新 建'))?.click();
     });
 
-    await waitForComponentToPaint(wrapper);
-    expect(wrapper.baseElement.querySelector<HTMLDivElement>('.ant-modal-footer')).toBeFalsy();
+    expect(
+      wrapper.baseElement.querySelector<HTMLDivElement>('.ant-modal-footer'),
+    ).toBeFalsy();
   });
 
   it('📦 ModalForm close no rerender from', async () => {
@@ -336,13 +418,17 @@ describe('ModalForm', () => {
         />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
     await act(async () => {
       (await wrapper.findByText('新 建'))?.click();
     });
 
-    await waitForComponentToPaint(wrapper, 300);
+    await waitFor(async () => {
+      await waitForWaitTime(300);
+    });
 
     act(() => {
       fireEvent.change(wrapper.baseElement.querySelector('.ant-input#test')!, {
@@ -351,18 +437,28 @@ describe('ModalForm', () => {
         },
       });
     });
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
     expect(await wrapper.findByDisplayValue('test')).toBeTruthy();
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
     act(() => {
-      wrapper.baseElement.querySelector<HTMLDivElement>('button.ant-modal-close')?.click();
+      wrapper.baseElement
+        .querySelector<HTMLDivElement>('button.ant-modal-close')
+        ?.click();
     });
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
     await act(async () => {
       (await wrapper.findByText('新 建'))?.click();
     });
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
     expect(await wrapper.findByDisplayValue('test')).toBeTruthy();
   });
@@ -387,12 +483,16 @@ describe('ModalForm', () => {
         />
       </ModalForm>,
     );
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
     await act(async () => {
       (await wrapper.findByText('新 建'))?.click();
     });
 
-    await waitForComponentToPaint(wrapper, 300);
+    await waitFor(async () => {
+      await waitForWaitTime(300);
+    });
     act(() => {
       fireEvent.change(wrapper.container.querySelector('.ant-input#test')!, {
         target: {
@@ -401,77 +501,93 @@ describe('ModalForm', () => {
       });
     });
 
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
     expect(await wrapper.findByDisplayValue('1111')).toBeTruthy();
 
-    await waitForComponentToPaint(wrapper);
-
-    act(() => {
-      wrapper.baseElement.querySelector<HTMLDivElement>('button.ant-modal-close')?.click();
+    await waitFor(async () => {
+      await waitForWaitTime(100);
     });
 
-    await waitForComponentToPaint(wrapper);
+    act(() => {
+      wrapper.baseElement
+        .querySelector<HTMLDivElement>('button.ant-modal-close')
+        ?.click();
+    });
+
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
     await act(async () => {
       (await wrapper.findByText('新 建'))?.click();
     });
-    await waitForComponentToPaint(wrapper);
+    await waitFor(async () => {
+      await waitForWaitTime(100);
+    });
 
     expect(await wrapper.findByDisplayValue('1234')).toBeTruthy();
   });
 
   it('📦 DrawerForm submitTimeout is number will disabled close button when submit', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
+    vi.useFakeTimers();
     const html = render(
       <ModalForm
         visible
         modalProps={{
           onCancel: () => fn(),
         }}
-        onFinish={async () => {
-          await waitTime(3000);
+        onFinish={() => {
+          return new Promise((resolve) => {
+            setTimeout(() => {
+              resolve(true);
+            }, 3000);
+          });
         }}
         submitTimeout={3000}
       >
         <ProFormText name="text" />
       </ModalForm>,
     );
-    await waitForComponentToPaint(html, 500);
 
     await act(async () => {
       (await html.findByText('确 认'))?.click();
     });
 
-    await waitForComponentToPaint(html, 1000);
-
     expect(
-      (html.queryAllByText('取 消').at(0)?.parentElement as HTMLButtonElement).disabled,
+      (html.queryAllByText('取 消').at(0)?.parentElement as HTMLButtonElement)
+        .disabled,
     ).toEqual(true);
 
     await act(async () => {
       (await html.queryByText('取 消'))?.click();
     });
 
-    await waitForComponentToPaint(html, 500);
-
     expect(fn).not.toBeCalled();
 
-    await waitForComponentToPaint(html, 2500);
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
 
     expect(
-      (html.queryAllByText('取 消').at(0)?.parentElement as HTMLButtonElement)?.disabled,
+      (html.queryAllByText('取 消').at(0)?.parentElement as HTMLButtonElement)
+        ?.disabled,
     ).toEqual(false);
 
     await act(async () => {
       (await html.queryByText('取 消'))?.click();
     });
 
-    await waitForComponentToPaint(html, 1000);
-
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
     expect(fn).toBeCalled();
+    vi.useRealTimers();
   });
 
   it('📦 modal submitTimeout is null no disable close button when submit', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const wrapper = render(
       <ModalForm
         visible
@@ -479,27 +595,38 @@ describe('ModalForm', () => {
           onCancel: () => fn(),
         }}
         onFinish={async () => {
-          await waitTime(2000);
+          await waitForWaitTime(2000);
         }}
       />,
     );
-    await waitForComponentToPaint(wrapper, 500);
+
+    await waitFor(async () => {
+      await waitForWaitTime(500);
+    });
 
     await act(async () => {
       (await wrapper.findByText('确 认'))?.click();
     });
 
-    await waitForComponentToPaint(wrapper, 500);
+    await waitFor(async () => {
+      await waitForWaitTime(500);
+    });
 
     expect(
-      wrapper.baseElement.querySelector<HTMLButtonElement>('button.ant-btn-default')?.disabled,
+      wrapper.baseElement.querySelector<HTMLButtonElement>(
+        'button.ant-btn-default',
+      )?.disabled,
     ).toEqual(false);
 
     act(() => {
-      wrapper.baseElement.querySelector<HTMLDivElement>('button.ant-modal-close')?.click();
+      wrapper.baseElement
+        .querySelector<HTMLDivElement>('button.ant-modal-close')
+        ?.click();
     });
 
-    await waitForComponentToPaint(wrapper, 500);
+    await waitFor(async () => {
+      await waitForWaitTime(500);
+    });
 
     expect(fn).toBeCalled();
 
@@ -545,14 +672,20 @@ describe('ModalForm', () => {
       </ModalForm>,
     );
 
-    waitForComponentToPaint(html, 200);
     expect(ref.current).toBeFalsy();
+
     await act(async () => {
       (await html.findByText('新 建'))?.click();
     });
-    await waitForComponentToPaint(html, 200);
 
-    expect(ref.current).toBeTruthy();
+    await waitFor(
+      () => {
+        expect(ref.current).toBeTruthy();
+      },
+      {
+        timeout: 1000,
+      },
+    );
 
     html.unmount();
   });

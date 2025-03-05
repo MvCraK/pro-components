@@ -1,11 +1,14 @@
-﻿import arEG from './locale/ar_EG';
+﻿import { get } from 'rc-util';
+import arEG from './locale/ar_EG';
 import caES from './locale/ca_ES';
+import csCZ from './locale/cs_CZ';
 import deDE from './locale/de_DE';
 import enGB from './locale/en_GB';
 import enUS from './locale/en_US';
 import esES from './locale/es_ES';
 import faIR from './locale/fa_IR';
 import frFR from './locale/fr_FR';
+import heIL from './locale/he_IL';
 import hrHR from './locale/hr_HR';
 import idID from './locale/id_ID';
 import itIT from './locale/it_IT';
@@ -13,42 +16,21 @@ import jaJP from './locale/ja_JP';
 import koKR from './locale/ko_KR';
 import mnMN from './locale/mn_MN';
 import msMY from './locale/ms_MY';
+import nlNL from './locale/nl_NL';
 import plPL from './locale/pl_PL';
 import ptBR from './locale/pt_BR';
+import roRO from './locale/ro_RO';
 import ruRU from './locale/ru_RU';
+import skSK from './locale/sk_SK';
 import srRS from './locale/sr_RS';
+import svSE from './locale/sv_SE';
 import thTH from './locale/th_TH';
 import trTR from './locale/tr_TR';
+import ukUA from './locale/uk_UA';
+import uzUZ from './locale/uz_UZ';
 import viVN from './locale/vi_VN';
 import zhCN from './locale/zh_CN';
 import zhTW from './locale/zh_TW';
-
-/**
- * 安全的从一个对象中读取相应的值
- * @param source
- * @param path
- * @param defaultValue
- * @returns
- */
-function get(
-  source: Record<string, unknown>,
-  path: string,
-  defaultValue?: string,
-): string | undefined {
-  // a[3].b -> a.3.b
-  const paths = path.replace(/\[(\d+)\]/g, '.$1').split('.');
-  let result = source;
-  let message = defaultValue;
-  // eslint-disable-next-line no-restricted-syntax
-  for (const p of paths) {
-    message = Object(result)[p];
-    result = Object(result)[p];
-    if (message === undefined) {
-      return defaultValue;
-    }
-  }
-  return message;
-}
 
 export type IntlType = {
   locale: string;
@@ -61,9 +43,22 @@ export type IntlType = {
  * @param locale
  * @param localeMap
  */
-export const createIntl = (locale: string, localeMap: Record<string, any>): IntlType => ({
-  getMessage: (id: string, defaultMessage: string) =>
-    get(localeMap, id, defaultMessage) || defaultMessage,
+export const createIntl = (
+  locale: string,
+  localeMap: Record<string, any>,
+): IntlType => ({
+  getMessage: (id: string, defaultMessage: string) => {
+    const msg =
+      get(localeMap, id.replace(/\[(\d+)\]/g, '.$1').split('.')) || '';
+    if (msg) return msg;
+    const localKey = locale.replace('_', '-');
+    if (localKey === 'zh-CN') {
+      return defaultMessage;
+    }
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    const intl = intlMap['zh-CN'];
+    return intl ? intl.getMessage(id, defaultMessage) : defaultMessage;
+  },
   locale,
 });
 
@@ -91,6 +86,14 @@ const trTRIntl = createIntl('tr_TR', trTR);
 const plPLIntl = createIntl('pl_PL', plPL);
 const hrHRIntl = createIntl('hr_', hrHR);
 const thTHIntl = createIntl('th_TH', thTH);
+const csCZIntl = createIntl('cs_cz', csCZ);
+const skSKIntl = createIntl('sk_SK', skSK);
+const heILIntl = createIntl('he_IL', heIL);
+const ukUAIntl = createIntl('uk_UA', ukUA);
+const uzUZIntl = createIntl('uz_UZ', uzUZ);
+const nlNLIntl = createIntl('nl_NL', nlNL);
+const roROIntl = createIntl('ro_RO', roRO);
+const svSEIntl = createIntl('sv_SE', svSE);
 
 const intlMap = {
   'mn-MN': mnMNIntl,
@@ -117,6 +120,14 @@ const intlMap = {
   'pl-PL': plPLIntl,
   'hr-HR': hrHRIntl,
   'th-TH': thTHIntl,
+  'cs-CZ': csCZIntl,
+  'sk-SK': skSKIntl,
+  'he-IL': heILIntl,
+  'uk-UA': ukUAIntl,
+  'uz-UZ': uzUZIntl,
+  'nl-NL': nlNLIntl,
+  'ro-RO': roROIntl,
+  'sv-SE': svSEIntl,
 };
 
 const intlMapKeys = Object.keys(intlMap);
@@ -126,11 +137,8 @@ const intlMapKeys = Object.keys(intlMap);
  *
  * @param localeKey
  */
-export const findIntlKeyByAntdLocaleKey = <T extends string | undefined>(localeKey: T) => {
-  if (!localeKey) {
-    return 'zh-CN' as T;
-  }
-  const localeName = localeKey.toLocaleLowerCase();
+export const findIntlKeyByAntdLocaleKey = <T extends string>(localeKey?: T) => {
+  const localeName = (localeKey || 'zh-CN').toLocaleLowerCase();
   return intlMapKeys.find((intlKey) => {
     const LowerCaseKey = intlKey.toLocaleLowerCase();
     return LowerCaseKey.includes(localeName);
@@ -138,30 +146,38 @@ export const findIntlKeyByAntdLocaleKey = <T extends string | undefined>(localeK
 };
 
 export {
-  mnMNIntl,
   arEGIntl,
-  enUSIntl,
-  enGBIntl,
-  zhCNIntl,
-  viVNIntl,
-  itITIntl,
-  jaJPIntl,
-  esESIntl,
   caESIntl,
-  ruRUIntl,
-  srRSIntl,
-  msMYIntl,
-  zhTWIntl,
-  frFRIntl,
-  ptBRIntl,
-  koKRIntl,
-  idIDIntl,
+  csCZIntl,
   deDEIntl,
+  enGBIntl,
+  enUSIntl,
+  esESIntl,
   faIRIntl,
-  trTRIntl,
-  plPLIntl,
+  frFRIntl,
+  heILIntl,
   hrHRIntl,
-  thTHIntl,
+  idIDIntl,
   intlMap,
   intlMapKeys,
+  itITIntl,
+  jaJPIntl,
+  koKRIntl,
+  mnMNIntl,
+  msMYIntl,
+  nlNLIntl,
+  plPLIntl,
+  ptBRIntl,
+  roROIntl,
+  ruRUIntl,
+  skSKIntl,
+  srRSIntl,
+  svSEIntl,
+  thTHIntl,
+  trTRIntl,
+  ukUAIntl,
+  uzUZIntl,
+  viVNIntl,
+  zhCNIntl,
+  zhTWIntl,
 };

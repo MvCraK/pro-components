@@ -1,7 +1,11 @@
 import { SettingDrawer } from '@ant-design/pro-components';
-import { act, fireEvent, render } from '@testing-library/react';
-import { waitForComponentToPaint } from '../util';
+import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
+import { act } from 'react';
 import { defaultSettings } from './defaultSettings';
+
+afterEach(() => {
+  cleanup();
+});
 
 describe('settingDrawer.test', () => {
   beforeAll(() => {
@@ -20,21 +24,27 @@ describe('settingDrawer.test', () => {
       },
     });
   });
-  beforeEach(() => {
-    // @ts-expect-error
-    window.MutationObserver = null;
-  });
 
   it('🌺 base user', () => {
     const html = render(
-      <SettingDrawer disableUrlParams settings={defaultSettings} getContainer={false} collapse />,
+      <SettingDrawer
+        disableUrlParams
+        settings={defaultSettings}
+        getContainer={false}
+        collapse
+      />,
     );
     expect(html.asFragment()).toMatchSnapshot();
   });
 
   it('🌺 settings = undefined', () => {
     const html = render(
-      <SettingDrawer disableUrlParams settings={undefined as any} getContainer={false} collapse />,
+      <SettingDrawer
+        disableUrlParams
+        settings={undefined as any}
+        getContainer={false}
+        collapse
+      />,
     );
     expect(html.asFragment()).toMatchSnapshot();
   });
@@ -70,7 +80,7 @@ describe('settingDrawer.test', () => {
   });
 
   it('🌺  theme color Change', async () => {
-    const onSettingChange = jest.fn();
+    const onSettingChange = vi.fn();
     const colorList = [
       { key: 'dust', color: '#F5222D' },
       { key: 'volcano', color: '#FA541C' },
@@ -93,15 +103,25 @@ describe('settingDrawer.test', () => {
       />,
     );
 
-    fireEvent.click(container.querySelectorAll('div.ant-pro-setting-drawer-theme-color-block')[0]);
-    expect(onSettingChange).toBeCalledWith('#1677FF');
-
-    fireEvent.click(container.querySelectorAll('div.ant-pro-setting-drawer-theme-color-block')[1]);
-
-    expect(onSettingChange).toBeCalledWith('#F5222D');
-    expect(container.querySelectorAll('div.ant-pro-setting-drawer-theme-color-block')).toHaveLength(
-      9,
+    fireEvent.click(
+      container.querySelectorAll(
+        'div.ant-pro-setting-drawer-theme-color-block',
+      )[0],
     );
+    expect(onSettingChange).toHaveBeenCalledWith('#1677FF');
+
+    fireEvent.click(
+      container.querySelectorAll(
+        'div.ant-pro-setting-drawer-theme-color-block',
+      )[1],
+    );
+
+    expect(onSettingChange).toHaveBeenCalledWith('#F5222D');
+    expect(
+      container.querySelectorAll(
+        'div.ant-pro-setting-drawer-theme-color-block',
+      ),
+    ).toHaveLength(9);
     unmount();
   });
 
@@ -119,7 +139,7 @@ describe('settingDrawer.test', () => {
   });
 
   it('🌺 initState form query', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const { container, unmount } = render(
       <div>
         <SettingDrawer
@@ -137,7 +157,7 @@ describe('settingDrawer.test', () => {
     fireEvent.click(container.querySelector('div.ant-drawer-mask')!);
 
     expect(fn).toBeCalled();
-    expect(fn).toBeCalledWith({
+    expect(fn).toHaveBeenCalledWith({
       navTheme: 'realDark',
       layout: 'mix',
       contentWidth: 'Fluid',
@@ -174,7 +194,7 @@ describe('settingDrawer.test', () => {
         },
       },
     });
-    const fn = jest.fn();
+    const fn = vi.fn();
     const { container, unmount } = render(
       <SettingDrawer
         disableUrlParams
@@ -192,7 +212,7 @@ describe('settingDrawer.test', () => {
   });
 
   it('🌺 onCollapseChange', async () => {
-    const onCollapseChange = jest.fn();
+    const onCollapseChange = vi.fn();
     const { container } = render(
       <SettingDrawer
         disableUrlParams
@@ -213,7 +233,7 @@ describe('settingDrawer.test', () => {
   });
 
   it('🌺 onLayout Change', async () => {
-    const onSettingChange = jest.fn();
+    const onSettingChange = vi.fn();
     const { container } = render(
       <SettingDrawer
         disableUrlParams
@@ -225,20 +245,24 @@ describe('settingDrawer.test', () => {
     );
 
     fireEvent.click(
-      container.querySelectorAll('div.ant-pro-setting-drawer-block-checkbox-layout-item')[2],
+      container.querySelectorAll(
+        'div.ant-pro-setting-drawer-block-checkbox-layout-item',
+      )[2],
     );
 
-    expect(onSettingChange).toBeCalledWith('mix');
+    expect(onSettingChange).toHaveBeenCalledWith('mix');
 
     fireEvent.click(
-      container.querySelectorAll('div.ant-pro-setting-drawer-block-checkbox-layout-item')[1],
+      container.querySelectorAll(
+        'div.ant-pro-setting-drawer-block-checkbox-layout-item',
+      )[1],
     );
 
-    expect(onSettingChange).toBeCalledWith('top');
+    expect(onSettingChange).toHaveBeenCalledWith('top');
   });
 
   it('🌺 fix-siderbar Change', async () => {
-    const onSettingChange = jest.fn();
+    const onSettingChange = vi.fn();
     const { container } = render(
       <SettingDrawer
         disableUrlParams
@@ -252,15 +276,15 @@ describe('settingDrawer.test', () => {
 
     fireEvent.click(container.querySelector('button.fix-siderbar')!);
 
-    expect(onSettingChange).toBeCalledWith(true);
+    expect(onSettingChange).toHaveBeenCalledWith(true);
 
     fireEvent.click(container.querySelector('button.fix-siderbar')!);
 
-    expect(onSettingChange).toBeCalledWith(false);
+    expect(onSettingChange).toHaveBeenCalledWith(false);
   });
 
   it('🌺 content-width change', async () => {
-    const onSettingChange = jest.fn();
+    const onSettingChange = vi.fn();
     const { container } = render(
       <SettingDrawer
         disableUrlParams
@@ -281,11 +305,11 @@ describe('settingDrawer.test', () => {
         .querySelector('.ant-select-selector')!,
     );
 
-    expect(onSettingChange).toBeCalledWith('Fluid');
+    expect(onSettingChange).toHaveBeenCalledWith('Fluid');
   });
 
   it('🌺 splitMenu change', async () => {
-    const onSettingChange = jest.fn();
+    const onSettingChange = vi.fn();
     const { container } = render(
       <SettingDrawer
         disableUrlParams
@@ -302,11 +326,11 @@ describe('settingDrawer.test', () => {
 
     fireEvent.click(container.querySelector('button.split-menus')!);
 
-    expect(onSettingChange).toBeCalledWith(true);
+    expect(onSettingChange).toHaveBeenCalledWith(true);
   });
 
   it('🌺 fixed-header Change', async () => {
-    const onSettingChange = jest.fn();
+    const onSettingChange = vi.fn();
     const { container } = render(
       <SettingDrawer
         disableUrlParams
@@ -320,15 +344,15 @@ describe('settingDrawer.test', () => {
 
     fireEvent.click(container.querySelector('button.fixed-header')!);
 
-    expect(onSettingChange).toBeCalledWith(true);
+    expect(onSettingChange).toHaveBeenCalledWith(true);
 
     fireEvent.click(container.querySelector('button.fixed-header')!);
 
-    expect(onSettingChange).toBeCalledWith(false);
+    expect(onSettingChange).toHaveBeenCalledWith(false);
   });
 
   it('🌺 theme Change', async () => {
-    const onSettingChange = jest.fn();
+    const onSettingChange = vi.fn();
     const { container } = render(
       <SettingDrawer
         disableUrlParams
@@ -341,26 +365,34 @@ describe('settingDrawer.test', () => {
     );
 
     fireEvent.click(
-      container.querySelectorAll('div.ant-pro-setting-drawer-block-checkbox-theme-item')[0],
+      container.querySelectorAll(
+        'div.ant-pro-setting-drawer-block-checkbox-theme-item',
+      )[0],
     );
 
-    expect(onSettingChange).toBeCalledWith('light');
+    expect(onSettingChange).toHaveBeenCalledWith('light');
 
     fireEvent.click(
-      container.querySelectorAll('div.ant-pro-setting-drawer-block-checkbox-theme-item')[1],
+      container.querySelectorAll(
+        'div.ant-pro-setting-drawer-block-checkbox-theme-item',
+      )[1],
     );
 
-    expect(onSettingChange).toBeCalledWith('realDark');
+    expect(onSettingChange).toHaveBeenCalledWith('realDark');
   });
 
   it('🌺 colorWeak Change', async () => {
-    const onSettingChange = jest.fn();
+    const onSettingChange = vi.fn();
     document.body.appendChild(document.createElement('div'));
     const { container, rerender } = render(
       <SettingDrawer
         disableUrlParams
         colorList={[]}
-        settings={{ ...defaultSettings, navTheme: 'realDark', menuRender: false }}
+        settings={{
+          ...defaultSettings,
+          navTheme: 'realDark',
+          menuRender: false,
+        }}
         collapse
         getContainer={false}
         onSettingChange={(setting) => {
@@ -370,7 +402,7 @@ describe('settingDrawer.test', () => {
     );
 
     fireEvent.click(container.querySelector('button.color-weak')!);
-    expect(onSettingChange).toBeCalledWith(true);
+    expect(onSettingChange).toHaveBeenCalledWith(true);
 
     rerender(
       <SettingDrawer
@@ -386,17 +418,17 @@ describe('settingDrawer.test', () => {
     );
 
     fireEvent.click(container.querySelector('button.color-weak')!);
-    expect(onSettingChange).toBeCalledWith(false);
+    expect(onSettingChange).toHaveBeenCalledWith(false);
   });
 
   ['header', 'footer', 'menu', 'menuHeader'].map((key) => {
     it(`🌺 ${key} regional config change`, async () => {
-      const fn = jest.fn();
+      const fn = vi.fn();
       const { container, unmount } = render(
         <SettingDrawer
           disableUrlParams
           onSettingChange={(s) => {
-            if (s[`${key}Render`] === false) {
+            if (s[`${key}Render` as 'headerRender'] === false) {
               fn(key);
             }
           }}
@@ -407,14 +439,14 @@ describe('settingDrawer.test', () => {
 
       fireEvent.click(container.querySelector(`button.regional-${key}`)!);
 
-      expect(fn).toBeCalledWith(key);
+      expect(fn).toHaveBeenCalledWith(key);
       unmount();
     });
   });
 
   it('🌺 onLanguageChange support', async () => {
     let fn: Function | null = null;
-    const addEventListenerSpy = jest
+    const addEventListenerSpy = vi
       .spyOn(document, 'addEventListener')
       .mockImplementation((eventName, eventFn) => {
         if (eventName === 'languagechange') {
@@ -423,32 +455,34 @@ describe('settingDrawer.test', () => {
         }
       });
     const html = render(
-      <SettingDrawer disableUrlParams settings={defaultSettings} getContainer={false} collapse />,
+      <SettingDrawer
+        disableUrlParams
+        settings={defaultSettings}
+        getContainer={false}
+        collapse
+      />,
     );
-    const { rerender } = html;
-    await waitForComponentToPaint(html, 200);
-    act(() => {
-      expect(
-        (
-          html.baseElement.querySelectorAll(
-            '.ant-pro-setting-drawer-body-title',
-          )[0] as HTMLHeadingElement
-        ).textContent,
-      ).toEqual('整体风格设置');
-    });
+    await html.findAllByText('整体风格设置');
+
     act(() => {
       window.localStorage.setItem('umi_locale', 'en-US');
     });
-    await waitForComponentToPaint(html, 1200);
+
     act(() => {
       fn?.();
-      rerender(
-        <SettingDrawer disableUrlParams settings={defaultSettings} getContainer={false} collapse />,
+      html.rerender(
+        <SettingDrawer
+          disableUrlParams
+          settings={defaultSettings}
+          getContainer={false}
+          collapse
+        />,
       );
     });
+
     addEventListenerSpy.mockRestore();
-    await waitForComponentToPaint(html, 1200);
-    act(() => {
+
+    await waitFor(() => {
       expect(
         (
           html.baseElement.querySelectorAll(
@@ -457,8 +491,40 @@ describe('settingDrawer.test', () => {
         ).textContent,
       ).toEqual('Page style setting');
     });
-    await waitForComponentToPaint(html, 200);
+
     html.unmount();
+
     window.localStorage.setItem('umi_locale', 'zh-CN');
+  });
+
+  it('🌺 drawerProps = undefined', async () => {
+    const html = render(
+      <SettingDrawer
+        disableUrlParams
+        collapse
+        getContainer={false}
+        drawerProps={undefined as any}
+      />,
+    );
+
+    expect(html.asFragment()).toMatchSnapshot();
+  });
+
+  it('🌺 drawerProps has extra', async () => {
+    const { container } = render(
+      <SettingDrawer
+        disableUrlParams
+        collapse
+        getContainer={false}
+        drawerProps={{
+          closable: true,
+          extra: 'extra',
+        }}
+      />,
+    );
+
+    expect(
+      container.querySelectorAll('div.ant-drawer-extra')[0].innerHTML,
+    ).toEqual('extra');
   });
 });

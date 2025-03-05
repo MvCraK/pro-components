@@ -1,13 +1,15 @@
 import { ProForm } from './layouts';
 // 兼容代码-----------
-import 'antd/es/drawer/style';
-import 'antd/es/form/style';
-import 'antd/es/modal/style';
-import 'antd/es/rate/style';
-import 'antd/es/row/style';
-import 'antd/es/steps/style';
-import 'antd/es/tabs/style';
-import 'antd/es/upload/style';
+import 'antd/lib/drawer/style';
+import 'antd/lib/form/style';
+import 'antd/lib/modal/style';
+import 'antd/lib/rate/style';
+import 'antd/lib/row/style';
+import 'antd/lib/steps/style';
+import 'antd/lib/tabs/style';
+import 'antd/lib/upload/style';
+import { GridContext } from './helpers';
+import type { ProFormGroupProps } from './typing';
 //----------------------
 export { ProFormContext } from '@ant-design/pro-utils';
 export type {
@@ -22,6 +24,7 @@ export type {
   FormListActionType,
   ProFormCaptchaProps,
   ProFormCheckboxGroupProps,
+  ProFormCheckboxProps,
   ProFormColorPickerProps,
   ProFormColumnsType,
   ProFormDependencyProps,
@@ -36,13 +39,18 @@ export type {
   ProFormSelectProps,
   ProFormSliderProps,
   ProFormSwitchProps,
+  ProFormTreeSelectProps,
   ProFormUploadButtonProps,
   ProFormUploadDraggerProps,
 } from './components';
-export { FieldContext } from './FieldContext';
 export { FormListContext } from './components/List';
-export type { LightFilterFooterRender, ProFormFieldItemProps as ProFormItemProps } from './typing';
+export { FieldContext } from './FieldContext';
 export * from './layouts';
+export type {
+  LightFilterFooterRender,
+  ProFormFieldItemProps as ProFormItemProps,
+} from './typing';
+export { GridContext, ProForm };
+export type { ProFormGroupProps as GroupProps };
 
 export default ProForm;
-export { ProForm };

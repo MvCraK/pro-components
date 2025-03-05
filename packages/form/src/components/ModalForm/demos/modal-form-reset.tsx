@@ -1,6 +1,6 @@
 import type { ProFormInstance } from '@ant-design/pro-components';
 import { ModalForm, ProFormText } from '@ant-design/pro-components';
-import { Button, message, Space } from 'antd';
+import { Button, Space, message } from 'antd';
 import { useRef, useState } from 'react';
 
 const waitTime = (time: number = 100) => {
@@ -19,7 +19,7 @@ export default () => {
   return (
     <Space>
       <ModalForm
-        title="新建表单"
+        title="Create New Form"
         formRef={restFormRef}
         open={modalVisible}
         trigger={
@@ -29,13 +29,13 @@ export default () => {
               setModalVisible(true);
             }}
           >
-            通过 formRef 重置
+            Reset via formRef
           </Button>
         }
         onOpenChange={setModalVisible}
         submitter={{
           searchConfig: {
-            resetText: '重置',
+            resetText: 'Reset',
           },
           resetButtonProps: {
             onClick: () => {
@@ -47,24 +47,29 @@ export default () => {
         onFinish={async (values) => {
           await waitTime(2000);
           console.log(values);
-          message.success('提交成功');
+          message.success('Submission successful');
           return true;
         }}
       >
         <ProFormText
           width="md"
           name="name"
-          label="签约客户名称"
-          tooltip="最长为 24 位"
-          placeholder="请输入名称"
+          label="Contract Customer Name"
+          tooltip="Up to 24 characters"
+          placeholder="Please enter a name"
         />
 
-        <ProFormText width="md" name="company" label="我方公司名称" placeholder="请输入名称" />
+        <ProFormText
+          width="md"
+          name="company"
+          label="Our Company Name"
+          placeholder="Please enter a name"
+        />
       </ModalForm>
       <ModalForm
-        title="新建表单"
+        title="Create New Form"
         formRef={formRef}
-        trigger={<Button type="primary">通过自定义 footer 按钮重置</Button>}
+        trigger={<Button type="primary">Reset via custom footer button</Button>}
         submitter={{
           render: (props, defaultDoms) => {
             return [
@@ -75,7 +80,7 @@ export default () => {
                   props.reset();
                 }}
               >
-                重置
+                Reset
               </Button>,
             ];
           },
@@ -83,19 +88,24 @@ export default () => {
         onFinish={async (values) => {
           await waitTime(2000);
           console.log(values);
-          message.success('提交成功');
+          message.success('Submission successful');
           return true;
         }}
       >
         <ProFormText
           width="md"
           name="name"
-          label="签约客户名称"
-          tooltip="最长为 24 位"
-          placeholder="请输入名称"
+          label="Contract Customer Name"
+          tooltip="Up to 24 characters"
+          placeholder="Please enter a name"
         />
 
-        <ProFormText width="md" name="company" label="我方公司名称" placeholder="请输入名称" />
+        <ProFormText
+          width="md"
+          name="company"
+          label="Our Company Name"
+          placeholder="Please enter a name"
+        />
       </ModalForm>
     </Space>
   );

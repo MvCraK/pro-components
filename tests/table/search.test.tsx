@@ -1,12 +1,15 @@
-import ProTable from '@ant-design/pro-table';
-import { fireEvent, render } from '@testing-library/react';
+import type { ProFormInstance } from '@ant-design/pro-components';
+import { ProTable } from '@ant-design/pro-components';
+import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import type { FormInstance } from 'antd';
 import { Input } from 'antd';
-import MockDate from 'mockdate';
-import React, { createRef } from 'react';
-import { act } from 'react-dom/test-utils';
-import { waitForComponentToPaint, waitTime } from '../util';
-import { request } from './demo';
+import dayjs from 'dayjs';
+import React, { act, createRef } from 'react';
+import { waitTime } from '../util';
+
+afterEach(() => {
+  cleanup();
+});
 
 describe('BasicTable Search', () => {
   process.env.NODE_ENV = 'TEST';
@@ -30,8 +33,8 @@ describe('BasicTable Search', () => {
   };
 
   it('🎏 submit test', async () => {
-    const fn = jest.fn();
-    const paramsFn = jest.fn();
+    const fn = vi.fn();
+    const paramsFn = vi.fn();
     const html = render(
       <ProTable
         size="small"
@@ -50,9 +53,11 @@ describe('BasicTable Search', () => {
           },
         ]}
         onSubmit={fn}
-        request={(params) => {
+        request={async (params) => {
           paramsFn(params.current, params.pageSize);
-          return request(params);
+          return {
+            data: [{ key: 1, name: '1', money: 1 }],
+          };
         }}
         rowKey="key"
       />,
@@ -64,14 +69,15 @@ describe('BasicTable Search', () => {
       dom?.click();
     });
 
-    await waitForComponentToPaint(html, 300);
-    expect(fn).toBeCalledTimes(1);
-    expect(paramsFn).toBeCalledWith(1, 20);
+    await waitFor(() => {
+      expect(fn).toBeCalledTimes(1);
+      expect(paramsFn).toHaveBeenCalledWith(1, 20);
+    });
   });
 
   it('🎏 reset test', async () => {
-    const fn = jest.fn();
-    const resetFn = jest.fn();
+    const fn = vi.fn();
+    const resetFn = vi.fn();
     const html = render(
       <ProTable
         size="small"
@@ -88,16 +94,19 @@ describe('BasicTable Search', () => {
           },
         ]}
         onReset={resetFn}
-        request={(params) => {
+        request={async () => {
           fn();
-          return request(params);
+          return {
+            data: [{ key: 1, name: '1', money: 1 }],
+          };
         }}
         rowKey="key"
       />,
     );
-    await waitForComponentToPaint(html, 2000);
 
-    expect(fn).toBeCalledTimes(1);
+    await waitFor(() => {
+      expect(fn).toBeCalledTimes(1);
+    });
 
     const dom = await (await html.findAllByText('重 置')).at(0);
 
@@ -105,15 +114,16 @@ describe('BasicTable Search', () => {
       dom?.click();
     });
 
-    await waitForComponentToPaint(html, 300);
-
-    expect(fn).toBeCalledTimes(2);
-    expect(resetFn).toBeCalledTimes(1);
+    await waitFor(() => {
+      expect(fn).toBeCalledTimes(2);
+      expect(resetFn).toBeCalledTimes(1);
+    });
   });
 
   it('🎏 reset test when pagination is false', async () => {
-    const fn = jest.fn();
-    const resetFn = jest.fn();
+    const fn = vi.fn();
+    const resetFn = vi.fn();
+    vi.useFakeTimers();
     const html = render(
       <ProTable
         size="small"
@@ -131,29 +141,35 @@ describe('BasicTable Search', () => {
         ]}
         onReset={resetFn}
         pagination={false}
-        request={(params) => {
+        request={async () => {
           fn();
-          return request(params);
+          return {
+            data: [{ key: 1, name: '1', money: 1 }],
+          };
         }}
         rowKey="key"
       />,
     );
-    await waitForComponentToPaint(html, 2000);
 
+    await html.findAllByText('重 置');
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
     const dom = await (await html.findAllByText('重 置')).at(0);
 
     act(() => {
       dom?.click();
     });
 
-    await waitForComponentToPaint(html, 200);
-
-    expect(fn).toBeCalledTimes(2);
-    expect(resetFn).toBeCalledTimes(1);
+    await waitFor(() => {
+      expect(fn).toBeCalledTimes(2);
+      expect(resetFn).toBeCalledTimes(1);
+    });
+    vi.useRealTimers();
   });
 
   it('🎏 table will render loading dom', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const html = render(
       <ProTable
         size="small"
@@ -180,24 +196,31 @@ describe('BasicTable Search', () => {
             ],
           },
         ]}
-        request={async (params) => {
+        search={false}
+        request={async () => {
           fn();
-          await waitTime(5000);
-          return request(params);
+          await waitTime(5000000);
+          return {
+            data: [{ key: 1, name: '1', money: 1 }],
+          };
         }}
         rowKey="key"
       />,
     );
-    await waitForComponentToPaint(html, 2000);
-    expect(fn).toBeCalledTimes(1);
 
-    expect(!!html.baseElement.querySelector('.ant-spin')).toBeTruthy();
+    await html.findAllByText('暂无数据');
 
-    html.unmount();
+    await waitFor(() => {
+      expect(fn).toBeCalledTimes(1);
+    });
+
+    await waitFor(() => {
+      expect(!!html.baseElement.querySelector('.ant-spin')).toBeTruthy();
+    });
   });
 
   it('🎏 manualRequest no render loading dom', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     const html = render(
       <ProTable
         size="small"
@@ -225,14 +248,18 @@ describe('BasicTable Search', () => {
           },
         ]}
         manualRequest
-        request={async (params) => {
+        request={async () => {
           fn();
-          return request(params);
+          return {
+            data: [{ key: 1, name: '1', money: 1 }],
+          };
         }}
         rowKey="key"
       />,
     );
-    await waitForComponentToPaint(html, 2000);
+
+    await html.findAllByText('姓名');
+
     expect(fn).toBeCalledTimes(0);
 
     expect(!!html.baseElement.querySelector('.ant-spin')).toBeFalsy();
@@ -241,7 +268,8 @@ describe('BasicTable Search', () => {
   });
 
   it('🎏 manualRequest test', async () => {
-    const requestFn = jest.fn();
+    const requestFn = vi.fn();
+    vi.useFakeTimers();
     const actionRef = React.createRef<any>();
     const html = render(
       <ProTable
@@ -253,25 +281,42 @@ describe('BasicTable Search', () => {
             valueType: 'money',
           },
         ]}
+        search={false}
         actionRef={actionRef}
         manualRequest
-        request={async (params) => {
+        request={async () => {
           requestFn();
-          await waitTime(200);
-          return request(params);
+          return {
+            data: [
+              {
+                key: '1',
+                money: '12000',
+              },
+            ],
+          };
         }}
         rowKey="key"
       />,
     );
-    await waitForComponentToPaint(html, 2000);
-    MockDate.set(1479799364001);
+
+    await waitFor(() => {
+      expect(requestFn).toBeCalledTimes(0);
+    });
+
+    act(() => {
+      vi.runOnlyPendingTimers();
+    });
 
     act(() => {
       actionRef.current?.reload();
     });
-    await waitForComponentToPaint(html, 2000);
 
-    expect(requestFn).toBeCalledTimes(1);
+    await html.findAllByText('¥12,000.00');
+    await waitFor(() => {
+      expect(requestFn).toBeCalledTimes(1);
+    });
+
+    vi.useRealTimers();
   });
 
   it('🎏 search span test', async () => {
@@ -302,22 +347,20 @@ describe('BasicTable Search', () => {
             dataIndex: 'name',
           },
         ]}
-        request={async (params) => {
-          await waitTime(200);
-          return request(params);
-        }}
+        dataSource={[{ key: 1, name: '1', money: 1 }]}
         rowKey="key"
       />,
     );
-    await waitForComponentToPaint(html, 1000);
 
-    expect(!!html.baseElement.querySelector('.ant-col.ant-col-12')).toBeTruthy();
-
-    html.unmount();
+    await waitFor(() => {
+      expect(
+        !!html.baseElement.querySelector('.ant-col.ant-col-12'),
+      ).toBeTruthy();
+    });
   });
 
   it('🎏 transform test', async () => {
-    const fn = jest.fn();
+    const fn = vi.fn();
     let formValues = { origin: '', status: '', startTime: '', endTime: '' };
     const html = render(
       <ProTable
@@ -332,7 +375,7 @@ describe('BasicTable Search', () => {
             dataIndex: 'state',
             initialValue: 'state',
             search: {
-              transform: () => 'status',
+              transform: (value) => ({ status: value }),
             },
           },
           {
@@ -340,16 +383,14 @@ describe('BasicTable Search', () => {
             dataIndex: 'dateRange',
             initialValue: ['2020-09-11', '2020-09-22'],
             search: {
-              transform: (value: any) => ({ startTime: value[0], endTime: value[1] }),
+              transform: (value: any) => ({
+                startTime: value[0],
+                endTime: value[1],
+              }),
             },
           },
         ]}
-        request={async () => {
-          return {
-            data: [],
-            success: true,
-          };
-        }}
+        dataSource={[{ key: 1, name: '1', money: 1 }]}
         onSubmit={(values) => {
           fn(values);
           formValues = values as any;
@@ -357,27 +398,27 @@ describe('BasicTable Search', () => {
         rowKey="key"
       />,
     );
-    await waitForComponentToPaint(html, 1400);
 
     const dom = await (await html.findAllByText('查 询')).at(0);
 
     act(() => {
       dom?.click();
     });
-    await waitForComponentToPaint(html, 1400);
 
-    expect(formValues.origin).toBe('origin');
-    expect(formValues.status).toBe('state');
-    expect(formValues.startTime).toBe('2020-09-11');
-    expect(formValues.endTime).toBe('2020-09-22');
-    expect(fn).toBeCalledTimes(1);
+    await waitFor(() => {
+      expect(formValues.origin).toBe('origin');
+      expect(formValues.status).toBe('state');
+      expect(formValues.startTime).toBe('2020-09-11');
+      expect(formValues.endTime).toBe('2020-09-22');
+      expect(fn).toBeCalledTimes(1);
+    });
 
     html.unmount();
   });
 
   it('🎏 renderFormItem test and fieldProps onChange', async () => {
-    const fn = jest.fn();
-    const onChangeFn = jest.fn();
+    const fn = vi.fn();
+    const onChangeFn = vi.fn();
     const html = render(
       <ProTable
         size="small"
@@ -397,7 +438,7 @@ describe('BasicTable Search', () => {
               },
             },
             renderFormItem: () => {
-              return <Input id="renderFormItem" />;
+              return <Input id="renderFormItem" placeholder="renderFormItem" />;
             },
           },
           {
@@ -406,27 +447,28 @@ describe('BasicTable Search', () => {
             dataIndex: 'name',
           },
         ]}
-        request={async () => {
-          await waitTime(500);
-          return {
-            data: [],
-            success: true,
-          };
-        }}
+        dataSource={[{ key: 1, name: '1', money: 1 }]}
         rowKey="key"
       />,
     );
-    await waitForComponentToPaint(html, 2000);
+
+    await html.findAllByPlaceholderText('renderFormItem');
 
     expect(html.baseElement.querySelector('input#renderFormItem')).toBeTruthy();
 
     act(() => {
-      fireEvent.change(html.baseElement.querySelector('input#renderFormItem')!, {
-        target: { value: '12' },
-      });
+      fireEvent.change(
+        html.baseElement.querySelector('input#renderFormItem')!,
+        {
+          target: { value: '12' },
+        },
+      );
     });
-    expect(onChangeFn).toBeCalledWith('12');
-    expect(fn).toBeCalledWith('12');
+    await waitFor(() => {
+      expect(onChangeFn).toHaveBeenCalledWith('12');
+      expect(fn).toHaveBeenCalledWith('12');
+    });
+
     html.unmount();
   });
 
@@ -456,9 +498,12 @@ describe('BasicTable Search', () => {
         rowKey="key"
       />,
     );
-    await waitForComponentToPaint(html, 2000);
 
-    expect(html.baseElement.querySelectorAll('div.ant-form-item').length).toBe(2);
+    await html.findAllByText('Name');
+
+    expect(html.baseElement.querySelectorAll('div.ant-form-item').length).toBe(
+      2,
+    );
     expect(html.baseElement.querySelectorAll('.money-class').length).toBe(0);
 
     act(() => {
@@ -487,11 +532,17 @@ describe('BasicTable Search', () => {
         />,
       );
     });
-    await waitForComponentToPaint(html, 200);
 
-    expect(html.baseElement.querySelectorAll('div.money-class').length).toBe(1);
+    await waitFor(() => {
+      expect(html.baseElement.querySelectorAll('div.money-class').length).toBe(
+        1,
+      );
 
-    expect(html.baseElement.querySelectorAll('div.ant-form-item').length).toBe(3);
+      expect(
+        html.baseElement.querySelectorAll('div.ant-form-item').length,
+      ).toBe(3);
+    });
+
     act(() => {
       html.rerender(
         <ProTable
@@ -514,11 +565,11 @@ describe('BasicTable Search', () => {
         />,
       );
     });
-
-    await waitForComponentToPaint(html, 200);
-    expect(html.baseElement.querySelectorAll('div.ant-form-item').length).toBe(3);
-
-    html.unmount();
+    await waitFor(() => {
+      expect(
+        html.baseElement.querySelectorAll('div.ant-form-item').length,
+      ).toBe(3);
+    });
   });
 
   it('🎏 request load success false', async () => {
@@ -542,10 +593,12 @@ describe('BasicTable Search', () => {
         rowKey="key"
       />,
     );
-    await waitForComponentToPaint(html, 1000);
 
-    expect(html.baseElement.querySelector('.ant-empty')).toBeTruthy();
+    await html.findAllByText('金额');
 
+    await waitFor(() => {
+      expect(html.baseElement.querySelector('.ant-empty')).toBeTruthy();
+    });
     html.unmount();
   });
 
@@ -573,10 +626,12 @@ describe('BasicTable Search', () => {
         rowKey="key"
       />,
     );
-    expect(() => {
-      // @ts-ignore
-      html.dive().html();
-    }).toThrowError();
+    await waitFor(() => {
+      expect(() => {
+        // @ts-ignore
+        html.dive().html();
+      }).toThrowError();
+    });
     html.unmount();
   });
 
@@ -599,12 +654,7 @@ describe('BasicTable Search', () => {
               dataIndex: 'name',
             },
           ]}
-          request={async () => {
-            await waitTime(600);
-            return {
-              data: [],
-            };
-          }}
+          dataSource={[{ key: 1, name: '1', money: 1 }]}
           rowKey="key"
         />
       ) : (
@@ -613,20 +663,18 @@ describe('BasicTable Search', () => {
     };
 
     const html = render(<TableDemo v />);
-
-    await waitTime(500);
-
+    await html.findAllByText('金额');
     act(() => {
       html.rerender(<TableDemo v={false} />);
     });
 
-    await waitTime(500);
+    await html.findAllByText('qixian');
     expect(html.baseElement.textContent).toBe('qixian');
     html.unmount();
   });
 
   it('🎏 when dateFormatter is a Function', async () => {
-    const fn2 = jest.fn();
+    const fn2 = vi.fn();
     const html = render(
       <ProTable
         columns={[
@@ -662,14 +710,70 @@ describe('BasicTable Search', () => {
         headerTitle="表单赋值"
       />,
     );
-    await waitForComponentToPaint(html, 1400);
+
+    await html.findAllByText('创建时间');
+
     const dom = await (await html.findAllByText('查 询')).at(0);
 
     act(() => {
       dom?.click();
     });
-    await waitForComponentToPaint(html, 1400);
-    expect(fn2).toBeCalledWith('2020-09-11 00:00:00');
-    html.unmount();
+
+    await waitFor(() => {
+      expect(fn2).toHaveBeenCalledWith('2020-09-11 00:00:00');
+    });
+  });
+
+  it('🎏 ProTable support formRef', async () => {
+    const onSubmitFn = vi.fn();
+    const formRef = React.createRef<ProFormInstance | undefined>();
+    const html = render(
+      <ProTable
+        formRef={formRef as any}
+        columns={[
+          {
+            title: '创建时间',
+            key: 'since',
+            dataIndex: 'createdAt',
+            valueType: 'date',
+            initialValue: dayjs('2020-09-11 00:00:00'),
+          },
+        ]}
+        request={() => {
+          return Promise.resolve({
+            data: [
+              {
+                key: 1,
+                name: `TradeCode ${1}`,
+                createdAt: 1602572994055,
+              },
+            ],
+            success: true,
+          });
+        }}
+        dateFormatter="string"
+        onSubmit={(params) => {
+          onSubmitFn(params.since);
+        }}
+        rowKey="key"
+        pagination={{
+          showSizeChanger: true,
+        }}
+        options={false}
+        headerTitle="表单赋值"
+      />,
+    );
+
+    await html.findAllByText('创建时间');
+
+    act(() => {
+      formRef.current?.submit();
+    });
+
+    await waitFor(() => {
+      expect(onSubmitFn).toHaveBeenCalledWith('2020-09-11');
+    });
+
+    expect(formRef.current?.getFieldFormatValue?.().since).toBe('2020-09-11');
   });
 });

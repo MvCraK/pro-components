@@ -7,7 +7,8 @@ const { Option } = Select;
 
 export default () => {
   const [tab, setTab] = useState('tab2');
-  const [tabPosition, setTabPosition] = useState<ProCardTabsProps['tabPosition']>('top');
+  const [tabPosition, setTabPosition] =
+    useState<ProCardTabsProps['tabPosition']>('top');
 
   return (
     <div>
@@ -16,7 +17,7 @@ export default () => {
         <Select
           value={tabPosition}
           onChange={(value) => setTabPosition(value)}
-          dropdownMatchSelectWidth={false}
+          popupMatchSelectWidth={false}
         >
           <Option value="top">top</Option>
           <Option value="bottom">bottom</Option>
@@ -30,19 +31,19 @@ export default () => {
           activeKey: tab,
           items: [
             {
-              label: `产品一`,
+              label: `Product One`,
               key: 'tab1',
-              children: `内容一`,
+              children: `Content One`,
             },
             {
-              label: `产品二`,
+              label: `Product Two`,
               key: 'tab2',
-              children: `内容二`,
+              children: `Content Two`,
             },
             {
-              label: `产品三`,
+              label: `Product Three`,
               key: 'tab3',
-              children: `内容三`,
+              children: `Content Three`,
             },
           ],
           onChange: (key) => {

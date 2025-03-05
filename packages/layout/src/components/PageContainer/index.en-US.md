@@ -1,6 +1,6 @@
 ---
 title: PageContainer
-
+atomId: PageContainer
 nav:
   title: Component
 ---
@@ -48,23 +48,27 @@ We have added a footer attribute to make it easier to do things like forms, so y
 
 ### Basic usage
 
-<code src="./demos/basic.tsx"></code>
+<code src="./demos/basic.tsx" title="Basic usage" iframe="650"></code>
 
 ### Fixed table headers
 
-<code src="./demos/fixHeader.tsx"></code>
+<code src="./demos/fixHeader.tsx" title="Fixed table headers" iframe="650"></code>
 
 ### Hide breadcrumbs
 
-<code src="./demos/hideBreadMenu.tsx">
+<code src="./demos/hideBreadMenu.tsx" title="Hide breadcrumbs" iframe="650">
 
-### page loading
+### Page loading
 
-<code src="./demos/loading.tsx"></code>
+<code src="./demos/loading.tsx" title="Page loading" iframe="650"></code>
 
-## API
+### Modify Token
 
-PageContainer wraps ant design's PageHeader component, adding tabList and content. It relies on Layout's route property to fill in the title and breadcrumb based on the current route. Of course you can pass in parameters to override the default values. PageContainer supports all of [Tabs](https://ant.design/components/tabs/) and [PageHeader](https://ant.design/components/page-header/)'s attributes of [Tabs]() and [PageHeader]().
+<code src="./demos/token.tsx" title="token" iframe="650"></code>
+
+## PageContainer
+
+PageContainer wraps ant design's PageHeader component, adding tabList and content. It relies on Layout's route property to fill in the title and breadcrumb based on the current route. Of course you can pass in parameters to override the default values. PageContainer supports all of [Tabs](https://ant.design/components/tabs/) and [PageHeader](https://procomponents.ant.design/en-US/components/page-header)'s attributes of [Tabs]() and [PageHeader]().
 
 | Parameters | Description | Type | Default |
 | --- | --- | --- | --- |
@@ -74,7 +78,7 @@ PageContainer wraps ant design's PageHeader component, adding tabList and conten
 | tabActiveKey | The currently highlighted tab item | string | - |
 | onTabChange | Callback for switching panels | `(key) => void` | - |
 | tabBarExtraContent | Extra element on tab bar | `React.ReactNode` | - |
-| header | All properties of [PageHeader](https://ant.design/components/page-header/). | `PageHeaderProps` | - |
+| header | All properties of [PageHeader](https://procomponents.ant.design/en-US/components/page-header). | `PageHeaderProps` | - |
 | fixedHeader | Fix the content of the pageHeader to the top, better not to use it if the page content is small, it will have serious obscuration problems | `boolean` | - |
 | affixProps | The configuration of the fixed pins, exactly the same as antd | `AffixProps` | - |
 | footer | Hover over the bottom action bar, pass in an array that will automatically add spaces | `ReactNode[]` | - |

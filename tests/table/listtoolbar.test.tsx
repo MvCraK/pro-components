@@ -1,13 +1,17 @@
 import { FullscreenOutlined, SettingOutlined } from '@ant-design/icons';
 import ProTable, { ListToolBar } from '@ant-design/pro-table';
-import { fireEvent, render } from '@testing-library/react';
+import { cleanup, fireEvent, render } from '@testing-library/react';
 import { Button, Input } from 'antd';
-import { act } from 'react-dom/test-utils';
-import { waitForComponentToPaint } from '../util';
+import { act } from 'react';
+import { waitForWaitTime } from '../util';
+
+afterEach(() => {
+  cleanup();
+});
 
 describe('Table valueEnum', () => {
   it('ListToolBar onAction', async () => {
-    const onAction = jest.fn();
+    const onAction = vi.fn();
     const wrapper = render(
       <ListToolBar
         actions={[
@@ -24,7 +28,7 @@ describe('Table valueEnum', () => {
         ]}
       />,
     );
-    await waitForComponentToPaint(wrapper);
+    await waitForWaitTime(100);
     await act(async () => {
       (await wrapper.findByText('添 加'))?.click();
     });
@@ -32,7 +36,7 @@ describe('Table valueEnum', () => {
   });
 
   it('ListToolBar support onSearch', async () => {
-    const onSearch = jest.fn();
+    const onSearch = vi.fn();
     const wrapper = render(
       <ProTable<{
         name: string;
@@ -62,11 +66,13 @@ describe('Table valueEnum', () => {
       />,
     );
 
-    await waitForComponentToPaint(wrapper);
+    await waitForWaitTime(100);
 
     act(() => {
       fireEvent.change(
-        wrapper.baseElement.querySelector('.ant-pro-table-list-toolbar-search .ant-input')!,
+        wrapper.baseElement.querySelector(
+          '.ant-pro-table-list-toolbar-search .ant-input',
+        )!,
         {
           target: {
             value: '1111111',
@@ -74,7 +80,7 @@ describe('Table valueEnum', () => {
         },
       );
     });
-    await waitForComponentToPaint(wrapper, 200);
+    await waitForWaitTime(200);
     act(() => {
       wrapper.baseElement
         .querySelector<HTMLButtonElement>(
@@ -83,8 +89,8 @@ describe('Table valueEnum', () => {
         ?.click();
     });
 
-    await waitForComponentToPaint(wrapper);
-    expect(onSearch).toBeCalledWith('1111111');
+    await waitForWaitTime(100);
+    expect(onSearch).toHaveBeenCalledWith('1111111');
   });
 
   it('ListToolBar action no array', async () => {
@@ -129,7 +135,7 @@ describe('Table valueEnum', () => {
   });
 
   it('ListToolBar onSettingClick', async () => {
-    const onClick = jest.fn();
+    const onClick = vi.fn();
     const wrapper = render(
       <ListToolBar
         settings={[
@@ -148,16 +154,20 @@ describe('Table valueEnum', () => {
         ]}
       />,
     );
-    await waitForComponentToPaint(wrapper, 1000);
+    await waitForWaitTime(1000);
     act(() => {
-      wrapper.baseElement.querySelector<HTMLDivElement>('.anticon-setting')?.click();
+      wrapper.baseElement
+        .querySelector<HTMLDivElement>('.anticon-setting')
+        ?.click();
     });
     expect(onClick).toHaveBeenLastCalledWith('s-value');
-    expect(wrapper.baseElement.querySelectorAll('.ant-divider').length).toEqual(0);
+    expect(wrapper.baseElement.querySelectorAll('.ant-divider').length).toEqual(
+      0,
+    );
   });
 
   it('ListToolBar search left', async () => {
-    const onSearch = jest.fn();
+    const onSearch = vi.fn();
     const wrapper = render(
       <ListToolBar
         search={{
@@ -166,7 +176,7 @@ describe('Table valueEnum', () => {
         }}
       />,
     );
-    await waitForComponentToPaint(wrapper, 1000);
+    await waitForWaitTime(1000);
     const inputEle = wrapper.baseElement.querySelector('input');
     act(() => {
       fireEvent.focus(inputEle!);
@@ -183,20 +193,22 @@ describe('Table valueEnum', () => {
     });
     expect(wrapper.getByDisplayValue('input 值')).toBeTruthy();
     expect(onSearch).toHaveBeenCalled();
-    expect((wrapper.getByDisplayValue('input 值') as HTMLInputElement).placeholder).toEqual(
-      '自定义 placeholder',
-    );
+    expect(
+      (wrapper.getByDisplayValue('input 值') as HTMLInputElement).placeholder,
+    ).toEqual('自定义 placeholder');
   });
 
   it('ListToolBar search right and custom input search', async () => {
-    const onSearch = jest.fn();
+    const onSearch = vi.fn();
     const wrapper = render(
       <ListToolBar
         title="I am title"
-        search={<Input.Search placeholder="自定义 placeholder" onSearch={onSearch} />}
+        search={
+          <Input.Search placeholder="自定义 placeholder" onSearch={onSearch} />
+        }
       />,
     );
-    await waitForComponentToPaint(wrapper, 1000);
+    await waitForWaitTime(1000);
     const inputEle = wrapper.baseElement.querySelector('input');
     act(() => {
       fireEvent.focus(inputEle!);
@@ -213,13 +225,13 @@ describe('Table valueEnum', () => {
     });
     expect(wrapper.getByDisplayValue('input 值')).toBeTruthy();
     expect(onSearch).toHaveBeenCalled();
-    expect((wrapper.getByDisplayValue('input 值') as HTMLInputElement).placeholder).toEqual(
-      '自定义 placeholder',
-    );
+    expect(
+      (wrapper.getByDisplayValue('input 值') as HTMLInputElement).placeholder,
+    ).toEqual('自定义 placeholder');
   });
 
   it('ListToolBar dropdown menu', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const wrapper = render(
       <ListToolBar
         menu={{
@@ -238,7 +250,7 @@ describe('Table valueEnum', () => {
         }}
       />,
     );
-    await waitForComponentToPaint(wrapper, 1000);
+    await waitForWaitTime(1000);
     await act(async () => {
       wrapper.getByText('全部事项')?.click();
     });
@@ -250,7 +262,7 @@ describe('Table valueEnum', () => {
   });
 
   it('ListToolBar tab menu', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const wrapper = render(
       <ListToolBar
         menu={{
@@ -269,7 +281,7 @@ describe('Table valueEnum', () => {
         }}
       />,
     );
-    await waitForComponentToPaint(wrapper, 1000);
+    await waitForWaitTime(1000);
     act(() => {
       wrapper.queryByText('已办事项')?.click();
     });
@@ -278,7 +290,7 @@ describe('Table valueEnum', () => {
   });
 
   it('ListToolBar inline menu', async () => {
-    const onChange = jest.fn();
+    const onChange = vi.fn();
     const wrapper = render(
       <ListToolBar
         menu={{
@@ -302,7 +314,7 @@ describe('Table valueEnum', () => {
         }}
       />,
     );
-    await waitForComponentToPaint(wrapper, 1000);
+    await waitForWaitTime(1000);
 
     await act(async () => {
       wrapper.getByText('已办事项')?.click();
@@ -319,7 +331,10 @@ describe('Table valueEnum', () => {
         }}
       />,
     );
-    await waitForComponentToPaint(wrapper, 1000);
-    expect(wrapper.baseElement.querySelectorAll('.ant-pro-table-list-toolbar-menu').length).toBe(0);
+    await waitForWaitTime(1000);
+    expect(
+      wrapper.baseElement.querySelectorAll('.ant-pro-table-list-toolbar-menu')
+        .length,
+    ).toBe(0);
   });
 });

@@ -3,6 +3,7 @@ const exec = require('child_process').execSync;
 const fs = require('fs');
 const path = require('path');
 
+console.log('开始发布');
 const github = new Octokit({
   debug: process.env.NODE_ENV === 'development',
   auth: process.env.GITHUB_TOKEN || process.env.GITHUB_AUTH,
@@ -30,9 +31,11 @@ const getChangelog = (content, version) => {
 };
 
 const getMds = async (allVersion = false) => {
-  const info = await github.rest.users.getAuthenticated().then(({ data: { login } }) => {
-    return 'Hello, ' + login;
-  });
+  const info = await github.rest.users
+    .getAuthenticated()
+    .then(({ data: { login } }) => {
+      return 'Hello, ' + login;
+    });
   console.log(info);
   const docDir = path.join(__dirname, '..', 'docs');
   const mdFile = fs
@@ -43,7 +46,9 @@ const getMds = async (allVersion = false) => {
 
   const content = fs.readFileSync(path.join(docDir, mdFile)).toString();
   let versions = [
-    require(path.join(path.join(__dirname, '..', 'packages', pkg, 'package.json'))).version,
+    require(
+      path.join(path.join(__dirname, '..', 'packages', pkg, 'package.json')),
+    ).version,
   ];
   if (allVersion) {
     versions = exec('git tag')

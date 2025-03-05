@@ -1,13 +1,17 @@
 import ProTable from '@ant-design/pro-table';
+import { cleanup, fireEvent, render, waitFor } from '@testing-library/react';
 import { ConfigProvider, Table } from 'antd';
 import dayjs from 'dayjs';
-import { fireEvent, render, waitFor } from '@testing-library/react';
 import type { RequestOptionsType } from 'packages/utils/src/typing';
 import { request } from './demo';
 
+afterEach(() => {
+  cleanup();
+});
+
 describe('Table ColumnSetting', () => {
   it('🎏 render', async () => {
-    const callBack = jest.fn();
+    const callBack = vi.fn();
     render(
       <ProTable
         size="small"
@@ -26,12 +30,12 @@ describe('Table ColumnSetting', () => {
 
     await waitFor(() => {
       expect(callBack).toBeCalled();
-      expect(callBack).toBeCalledWith('Edward King 0');
+      expect(callBack).toHaveBeenCalledWith('Edward King 0');
     });
   });
 
   it('🎏 query should parse by valueType', async () => {
-    const callBack = jest.fn();
+    const callBack = vi.fn();
     render(
       <ProTable
         size="small"
@@ -66,7 +70,7 @@ describe('Table ColumnSetting', () => {
 
     await waitFor(() => {
       expect(callBack).toBeCalled();
-      expect(callBack).toBeCalledWith('2016-11-22');
+      expect(callBack).toHaveBeenCalledWith('2016-11-22');
     });
   });
 
@@ -92,7 +96,7 @@ describe('Table ColumnSetting', () => {
   });
 
   it('🎏 render text', async () => {
-    const callBack = jest.fn();
+    const callBack = vi.fn();
     render(
       <ProTable
         size="small"
@@ -117,7 +121,7 @@ describe('Table ColumnSetting', () => {
 
     await waitFor(() => {
       expect(callBack).toBeCalled();
-      expect(callBack).toBeCalledWith('Edward King 0');
+      expect(callBack).toHaveBeenCalledWith('Edward King 0');
     });
   });
 
@@ -288,11 +292,14 @@ describe('Table ColumnSetting', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.change(container.querySelector('.ant-select-selection-search-input')!, {
-      target: {
-        value: '1',
+    fireEvent.change(
+      container.querySelector('.ant-select-selection-search-input')!,
+      {
+        target: {
+          value: '1',
+        },
       },
-    });
+    );
     expect(container.querySelectorAll('.ant-select-item')).toHaveLength(0);
 
     setTimeout(() => {

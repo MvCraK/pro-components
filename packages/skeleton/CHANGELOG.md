@@ -2,6 +2,78 @@
 
 All notable changes to this project will be documented in this file. See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.2.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.2.0...@ant-design/pro-skeleton@2.2.1) (2024-10-22)
+
+### Bug Fixes
+
+- **package:** 更新 repository URL 格式为 git+ssh 以确保一致性 ([8882d51](https://github.com/ant-design/pro-components/commit/8882d5164d8b14f8971bf9f34a339d282ac766ba))
+
+# [2.2.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.13...@ant-design/pro-skeleton@2.2.0) (2024-10-17)
+
+### Features
+
+- added exports to support ESM environments such as vitest ([#8738](https://github.com/ant-design/pro-components/issues/8738)) ([71c4be9](https://github.com/ant-design/pro-components/commit/71c4be9c9ca5942154e0473e62be608d784d53fc))
+
+## [2.1.13](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.12...@ant-design/pro-skeleton@2.1.13) (2024-04-19)
+
+**Note:** Version bump only for package @ant-design/pro-skeleton
+
+## [2.1.12](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.11...@ant-design/pro-skeleton@2.1.12) (2024-04-17)
+
+**Note:** Version bump only for package @ant-design/pro-skeleton
+
+## [2.1.11](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.10...@ant-design/pro-skeleton@2.1.11) (2024-03-15)
+
+### Bug Fixes
+
+- **components:** remove deprecated tip props ([85de8a2](https://github.com/ant-design/pro-components/commit/85de8a2bad41a21254719ff7f1df5328e42fd0fb))
+
+## [2.1.10](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.9...@ant-design/pro-skeleton@2.1.10) (2023-11-22)
+
+**Note:** Version bump only for package @ant-design/pro-skeleton
+
+## [2.1.9](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.8...@ant-design/pro-skeleton@2.1.9) (2023-10-26)
+
+**Note:** Version bump only for package @ant-design/pro-skeleton
+
+## [2.1.8](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.7...@ant-design/pro-skeleton@2.1.8) (2023-10-24)
+
+**Note:** Version bump only for package @ant-design/pro-skeleton
+
+## [2.1.7](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.6...@ant-design/pro-skeleton@2.1.7) (2023-07-31)
+
+**Note:** Version bump only for package @ant-design/pro-skeleton
+
+## [2.1.6](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.5...@ant-design/pro-skeleton@2.1.6) (2023-06-12)
+
+**Note:** Version bump only for package @ant-design/pro-skeleton
+
+## [2.1.5](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.4...@ant-design/pro-skeleton@2.1.5) (2023-05-31)
+
+**Note:** Version bump only for package @ant-design/pro-skeleton
+
+## [2.1.4](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.3...@ant-design/pro-skeleton@2.1.4) (2023-05-30)
+
+**Note:** Version bump only for package @ant-design/pro-skeleton
+
+## [2.1.3](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.2...@ant-design/pro-skeleton@2.1.3) (2023-05-08)
+
+**Note:** Version bump only for package @ant-design/pro-skeleton
+
+## [2.1.2](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.1...@ant-design/pro-skeleton@2.1.2) (2023-05-04)
+
+**Note:** Version bump only for package @ant-design/pro-skeleton
+
+## [2.1.1](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.1.0...@ant-design/pro-skeleton@2.1.1) (2023-04-25)
+
+**Note:** Version bump only for package @ant-design/pro-skeleton
+
+# [2.1.0](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.0.8...@ant-design/pro-skeleton@2.1.0) (2023-03-09)
+
+### Bug Fixes
+
+- **layout:** fix menu item icon style error ([#6745](https://github.com/ant-design/pro-components/issues/6745)) ([87f9656](https://github.com/ant-design/pro-components/commit/87f965682e81d9ce166d140dd418a37a6020abcf))
+
 ## [2.0.8](https://github.com/ant-design/pro-components/compare/@ant-design/pro-skeleton@2.0.7...@ant-design/pro-skeleton@2.0.8) (2023-02-08)
 
 **Note:** Version bump only for package @ant-design/pro-skeleton
